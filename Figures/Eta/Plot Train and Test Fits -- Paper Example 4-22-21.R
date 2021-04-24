@@ -1818,7 +1818,7 @@ lines( rbind(X[trainIndx,], X_test) %*% bCountry, lwd = 1.5, col = "green")
 
 # use last years fitted valyes
 lines( y = rbind(X[trainIndx,]) %*% bCountry, 
-       x = 51:101,
+       x = 51:100,
        lwd = 1.5, col = "darkgreen")
 
 
@@ -1830,7 +1830,7 @@ lines(y = preds,
       col = "red", lwd = 1.5)
 
 points(y = full$Y[trainIndx],
-       x = 51:101)
+       x = 51:100)
 # rmses
 sqrt(mean( (test$Y - preds)^2 )) # zero out
 sqrt(mean( (test$Y - full$Y[trainIndx])^2 )) # last years points as "predictions"
