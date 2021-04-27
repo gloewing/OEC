@@ -1,0 +1,6 @@
+This has worked for 
+
+1) using cvCF as the tuning for study specific lambdas
+2) No tuning — “zero” for study specific lambdas
+3) Generally it appears “zero” does VERY well for specialist and a bit better for zero-out specialists
+4) It seems limiting the possible etas to less than 0.9 may help (not positive).
