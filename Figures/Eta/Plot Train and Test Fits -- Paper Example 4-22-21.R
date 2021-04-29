@@ -32,7 +32,8 @@ testCountryData <- 12 # this is the number of months that we pretend the test co
 nH <- pM[itr, 1] # northern hemisphere
 # to emulate south africa
 
-full <- read.csv("world-mort.csv")
+dataNm <- "world-mort_old.csv"
+full <- read.csv( dataNm )
 full$date <- as.Date(full$date)
 
 if(nH){
@@ -166,7 +167,7 @@ colnames(resMat) <-  c("merge", "avg", "stacking", "stacking_zeroOut",
                        "oec_SpecUp", "oecWindow", "up", "upWindow")
 
 
-full <- read.csv("world-mort.csv")
+full <- read.csv( dataNm )
 full$date <- as.Date(full$date)
 
 
@@ -208,7 +209,7 @@ if(addYear){
 test_country <- countries[cnt]
 
 # read data
-full <- read.csv("world-mort.csv")
+full <- read.csv( dataNm )
 full$date <- as.Date(full$date)
 
 full <- full[is.element(full$country, countries),] # only include the countries selected above
@@ -1776,17 +1777,18 @@ for(j in 1:length(etasVec)){
 }
 # last row are actual observed values
 etaMat0[nrow(etaMat0), -c(1,2)] <- c(full$Y[trainIndx], test$Y) # actual observed values
-etaMat0[nrow(etaMat0), ] <- "obs"
+etaMat0[nrow(etaMat0), 2] <- "obs"
+
 
 # second to last row are the study specific model
 etaMat0[nrow(etaMat0) - 1, -c(1,2)] <- rbind(X[trainIndx,], X_test) %*% bCountry
 etaMat0[nrow(etaMat0) - 1, c(1,2)] <- c(NA, "country_specific_model")
 
-# 3rc to last row is zero out stacking
+# 3rd to last row is zero out stacking
 w <- wZeroOut # wZeroOut
 preds <- w[1] + rbind(X[trainIndx,], X_test) %*% betas %*% w[-1]
-etaMat0[nrow(etaMat0) - 1, -c(1,2)] <- preds
-etaMat0[nrow(etaMat0) - 1, c(1,2)] <- c(NA, "stacking")
+etaMat0[nrow(etaMat0) - 2, -c(1,2)] <- preds
+etaMat0[nrow(etaMat0) - 2, c(1,2)] <- c(NA, "stacking")
 
 # 3rd
 
@@ -1800,10 +1802,6 @@ par(mfrow = c(1,1))
 
 ############################################################################
 
-# setwd("~/Desktop/Research Final/OEC/OEC Ridge Plots")
-# jpeg(paste0("OEC_Mortality_Netherlands2015.pdf")) #, width = 850, height = 500)
-# 
-
 # country specific model
 plot(c(full$Y[trainIndx], test$Y),
      x = 1:length( c(full$Y[trainIndx], test$Y) ),
@@ -1816,10 +1814,10 @@ plot(c(full$Y[trainIndx], test$Y),
 abline(v = length(trainIndx), lwd = 2, lty = 2, col = "darkgray")
 lines( rbind(X[trainIndx,], X_test) %*% bCountry, lwd = 1.5, col = "green")
 
-# use last years fitted valyes
-lines( y = rbind(X[trainIndx,]) %*% bCountry, 
-       x = 51:100,
-       lwd = 1.5, col = "darkgreen")
+# use last years fitted values for predictions as reference
+# lines( y = rbind(X[trainIndx,]) %*% bCountry, 
+#        x = 51:100,
+#        lwd = 1.5, col = "darkgreen")
 
 
 # zero out Country specific stacking
@@ -1829,8 +1827,10 @@ lines(y = preds,
       x = 1:length( c(full$Y[trainIndx], test$Y) ),
       col = "red", lwd = 1.5)
 
-points(y = full$Y[trainIndx],
-       x = 51:100)
+# points from last year as a reference plotted as if they happened in test year
+# points(y = full$Y[trainIndx],
+#        x = 51:100)
+
 # rmses
 sqrt(mean( (test$Y - preds)^2 )) # zero out
 sqrt(mean( (test$Y - full$Y[trainIndx])^2 )) # last years points as "predictions"
@@ -1844,451 +1844,13 @@ for(j in 1:(nrow(etaMat0) -2)){
           col = "blue", lwd = 1.5)
 }
 
+# do again so can be seen
+abline(v = length(trainIndx), lwd = 2, lty = 2, col = "darkgray")
+lines( rbind(X[trainIndx,], X_test) %*% bCountry, lwd = 1.5, col = "green")
 
-############################################################################
-### etas
-# 
-# setwd("~/Desktop/Research Final/OEC/OEC Ridge Plots")
-# pdf(paste0("OEC_Mortality_Eta_Netherlands2015.pdf")) #, width = 550, height = 400)
-# 
-# 
-# # country specific model
-# plot(c(full$Y[trainIndx], test$Y),
-#      # x = 1:length( c(full$Y[trainIndx], test$Y) ),
-#      ylab = "Population Adjusted Deaths",
-#      xlab = "Months",
-#      pch = 19,
-#      lwd = 0.1,
-#      main = "OEC as Convex Combination of Country-Specific and Stacking")
-# 
-# abline(v = length(trainIndx), lwd = 2, lty = 2, col = "darkgray")
-# lines(rbind(X[trainIndx,], X_test) %*% bCountry, lwd = 2, lty=2)
-# 
-# # zero out Country specific stacking
-# w <- wZeroOut
-# preds <- w[1] + rbind(X[trainIndx,], X_test) %*% betas %*% w[-1]
-# lines(preds, col = "lightblue", lwd = 1.5, lty = 2)
-# 
-# # zero out OEC
-# # preds <- predsVecOEC
-# # lines(preds, col = "blue", lwd = 1.5)
-# 
-# etasVec <- c(1e-14, 1e-6, 0.999, 0.9999, 0.99999) # the last one is the tuned version
-# colorsVec <- heat.colors(length(etasVec)) #round( seq(225, 165, length = length(etasVec)) ) # lightest is lower eta
-# # heat.colors
-# for(j in 1:length(etasVec)){
-#     
-#     ######################
-#     # Specialist OEC -- Country specific Zero Out OEC-- initialize on country-specific stacking
-#     ######################
-#     indx1 <- which(full$Study == test_country)
-#     
-#     pMat <- matrix(ncol = itrs, nrow = nrow(rbind(X[trainIndx,-1], X_test[,-1])) ) # store predictions in each column 
-#     for(it in 1:itrs){
-#         set.seed(it)
-#         oecRidgeWS <- ridgeAltSpec0(data = full, 
-#                                     betaStart = warmRes$beta, 
-#                                     wStart = wZeroOut,
-#                                     lambdaVec = tuneParam$lambda, 
-#                                     mu = stackParamOECSpec0, 
-#                                     Stackindx = indx1, # rows corresponding to test country
-#                                     nnlsInd = TRUE,
-#                                     tol = 0.001,
-#                                     objCriteria = TRUE,
-#                                     eta = etasVec[j],
-#                                     dataSplit = 1,
-#                                     projs = 0,
-#                                     Avg = FALSE,
-#                                     wUpdate = "glmnet",
-#                                     sigK = sigK,
-#                                     sigStack = sigStack,
-#                                     standardize = TRUE,
-#                                     sampSzWeight = sampSzWeight,
-#                                     weights = Diagonal( nrow(full)),
-#                                     low = psiL / K,
-#                                     up = Inf,
-#                                     stackTol = 1e-9
-#         )
-#         
-#         pMat[,it] <- oecRidgePred(data = rbind(X[trainIndx,-1], X_test[,-1]),
-#                                   mod = oecRidgeWS)
-#         
-#     }
-#     
-#     predsVecOEC <- rowMeans( pMat ) # average predictions from the different runs
-#     ############################################################################
-#     # zero out OEC
-#     preds <- predsVecOEC
-#     
-#     lines(preds, col = colorsVec[j], lwd = 2)
-#     
-# }
-# 
-# # zero out Country specific stacking
-# w <- wZeroOut
-# preds <- w[1] + rbind(X[trainIndx,], X_test) %*% betas %*% w[-1]
-# lines(preds, col = "lightblue", lwd = 1.5, lty = 2)
-# 
-# legend(1, 20, 
-#        legend=c("Country", "Stack-0", 
-#                 paste0("OEC: Eta=", etasVec[c(1, length(etasVec))]) ),
-#        col=c("black", "lightblue", colorsVec[c(1, length(etasVec))]), 
-#        lwd = 1.5,
-#        lty = c(2, 2, rep(1, length(etasVec[c(1, length(etasVec))])   )    ) 
-#        )
-# 
-# dev.off()
-# 
-# 
-# ################################################################
-# # side-by-side Eta Mortality Plots
-# ################################################################
-# 
-# par(mfrow = c(1,2) )
-# setwd("~/Desktop/Research Final/OEC/OEC Ridge Plots")
-# jpeg(paste0("OEC_Mortality_Eta_Netherlands2015_2.pdf")) #, width = 850, height = 500)
-# 
-# 
-# # country specific model
-# plot(c(full$Y[trainIndx], test$Y),
-#      ylab = "Population Adjusted Deaths",
-#      xlab = "Months",
-#      pch = 19,
-#      lwd = 0.1,
-#      main = "OEC vs. Stacking (Netherlands 2015)")
-# 
-# abline(v = length(trainIndx), lwd = 2, lty = 2, col = "darkgray")
-# lines(rbind(X[trainIndx,], X_test) %*% bCountry, lwd = 1.5)
-# 
-# # zero out Country specific stacking
-# w <- wZeroOut
-# preds <- w[1] + rbind(X[trainIndx,], X_test) %*% betas %*% w[-1]
-# lines(preds, col = "red", lwd = 1.5)
-# 
-# # zero out OEC
-# preds <- predsVecOEC
-# lines(preds, col = "blue", lwd = 1.5)
-# 
-# 
-# legend(1, 20, legend=c("Country", "Stack-0", "OEC-0"),
-#        col=c("black", "red", "blue"), lwd = 1.5)
-# 
-# ############################################################################
-# ### etas
-# 
-# setwd("~/Desktop/Research Final/OEC/OEC Ridge Plots")
-# 
-# # country specific model
-# plot(c(full$Y[trainIndx], test$Y),
-#      ylab = "Population Adjusted Deaths",
-#      xlab = "Months",
-#      pch = 19,
-#      lwd = 0.1,
-#      main = "OEC as Convex Combination of Country-Specific and Stacking")
-# 
-# abline(v = length(trainIndx), lwd = 2, lty = 2, col = "darkgray")
-# lines(rbind(X[trainIndx,], X_test) %*% bCountry, lwd = 2, lty=2)
-# 
-# # zero out Country specific stacking
-# w <- wZeroOut
-# preds <- w[1] + rbind(X[trainIndx,], X_test) %*% betas %*% w[-1]
-# lines(preds, col = "lightblue", lwd = 1.5, lty = 2)
-# 
-# # zero out OEC
-# # preds <- predsVecOEC
-# # lines(preds, col = "blue", lwd = 1.5)
-# 
-# etasVec <- c(1e-14, 1e-6, 0.999, 0.9999, 0.99999)
-# colorsVec <- heat.colors(length(etasVec)) #round( seq(225, 165, length = length(etasVec)) ) # lightest is lower eta
-# # heat.colors
-# for(j in 1:length(etasVec)){
-#     
-#     ######################
-#     # Specialist OEC -- Country specific Zero Out OEC-- initialize on country-specific stacking
-#     ######################
-#     indx1 <- which(full$Study == test_country)
-#     
-#     pMat <- matrix(ncol = itrs, nrow = nrow(rbind(X[trainIndx,-1], X_test[,-1])) ) # store predictions in each column 
-#     for(it in 1:itrs){
-#         set.seed(it)
-#         oecRidgeWS <- ridgeAltSpec0(data = full, 
-#                                     betaStart = warmRes$beta, 
-#                                     wStart = wZeroOut,
-#                                     lambdaVec = tuneParam$lambda, 
-#                                     mu = stackParamOECSpec0, 
-#                                     Stackindx = indx1, # rows corresponding to test country
-#                                     nnlsInd = TRUE,
-#                                     tol = 0.001,
-#                                     objCriteria = TRUE,
-#                                     eta = etasVec[j],
-#                                     dataSplit = 1,
-#                                     projs = 0,
-#                                     Avg = FALSE,
-#                                     wUpdate = "glmnet",
-#                                     sigK = sigK,
-#                                     sigStack = sigStack,
-#                                     standardize = TRUE,
-#                                     sampSzWeight = sampSzWeight,
-#                                     weights = Diagonal( nrow(full)),
-#                                     low = psiL / K,
-#                                     up = Inf,
-#                                     stackTol = 1e-9
-#         )
-#         
-#         pMat[,it] <- oecRidgePred(data = rbind(X[trainIndx,-1], X_test[,-1]),
-#                                   mod = oecRidgeWS)
-#         
-#     }
-#     
-#     predsVecOEC <- rowMeans( pMat ) # average predictions from the different runs
-#     ############################################################################
-#     # zero out OEC
-#     preds <- predsVecOEC
-#     
-#     lines(preds, col = colorsVec[j], lwd = 2)
-#     
-# }
-# 
-# # zero out Country specific stacking
-# w <- wZeroOut
-# preds <- w[1] + rbind(X[trainIndx,], X_test) %*% betas %*% w[-1]
-# lines(preds, col = "lightblue", lwd = 1.5, lty = 2)
-# 
-# legend(1, 20, 
-#        legend=c("Country", "Stack-0", 
-#                 paste0("OEC: Eta=", etasVec[c(1, length(etasVec))]) ),
-#        col=c("black", "lightblue", colorsVec[c(1, length(etasVec))]), 
-#        lwd = 1.5,
-#        lty = c(2, 2, rep(1, length(etasVec[c(1, length(etasVec))])   )    ) 
-# )
-# 
-# dev.off()
-# 
-# 
-# # 
-# # 
-# # 
-# # # indxT <- which(full$Study == test_country)
-# # # 
-# # # df <- data.frame( y = c(full$Y[indxT] , test$Y), #y = c(predsCount, predsStack, resVec),
-# # #                   x = as.factor(rep(c("Country", "Stacking", etasVec), each = nrow(X_test))))
-# # # 
-# # # head(df)
-# # # indx2 <- 1:nrow(X_test)
-# # # 
-# # # df2 <- data.frame( x = indx2, y = test$Y) 
-# # # df <- cbind(df, df2)
-# # # colnames(df) <- c("y", "eta", "x2", "y2")
-# # 
-# # 
-# # ############################################################################
-# # ####### start making ggplot2 figure
-# # 
-# # # country specific model
-# # plot(c(full$Y[trainIndx], test$Y))
-# # abline(v = length(trainIndx))
-# # lines(rbind(X[trainIndx,], X_test) %*% bCountry)
-# # 
-# # # stacking
-# # w <- wCountry
-# # preds <- w[1] + rbind(X[trainIndx,], X_test) %*% betas %*% w[-1]
-# # # plot(c(full$Y[trainIndx], test$Y))
-# # abline(v = length(trainIndx))
-# # lines(preds, col = "red")
-# # 
-# # # zero out
-# # w <- wZeroOut
-# # preds <- w[1] + rbind(X[trainIndx,], X_test) %*% betas %*% w[-1]
-# # # plot(c(full$Y[trainIndx], test$Y))
-# # abline(v = length(trainIndx))
-# # lines(preds, col = "green")
-# # 
-# # 
-# # ## oec specialist
-# # 
-# # preds = predsVecOEC
-# #     # oecRidgePred(data = rbind(X[trainIndx,], X_test)[,-1],
-# #     #          mod = oecRidgeWS)
-# # # plot(c(full$Y[trainIndx], test$Y))
-# # abline(v = length(trainIndx))
-# # lines(y = preds, x = 51:100, col = "blue")
-# # 
-# # ## zero out
-# # 
-# # # preds = oecRidgePred(data = rbind(X[trainIndx,], X_test)[,-1],
-# #  #                    mod = oecRidgeWS)
-# # # plot(c(full$Y[trainIndx], test$Y))
-# # abline(v = length(trainIndx))
-# # lines(y = predsVecOEC, x = 51:100, col = "orange")
-# # 
-# # 
-# # f <- (test$Y -  ((X_test) %*% bCountry) )^2
-# # e <- (test$Y - predsVecOEC)^2
-# # g <- (test$Y - preds)^2
-# # 
-# # 
-# # apply( cbind( as.vector(f), as.vector(e), as.vector(g) ), 2, median)
-# # 
-# # 
-# # 
-# # ########################################
-# # 
-# # 
-# # # country specific model
-# # 
-# # predsCount <- (X_test) %*% bCountry
-# # 
-# # # stacking
-# # w <- wZeroOut#wCountry
-# # predsStack <- w[1] + rbind( X_test) %*% betas %*% w[-1]
-# # K <- ncol(warmRes$beta)
-# # p <- nrow(warmRes$beta)
-# # 
-# # #
-# # resVec <- c()
-# # eta <- etasVec <- 0.1 * exp(-(seq(1,15))) #c(0.0001, 0.1, 0.999, 0.9999)
-# # for(e in etasVec){
-# #     
-# #     indx1 <- which(full$Study == test_country)
-# #     
-# #     pMat <- matrix(ncol = itrs, nrow = nrow(X_test) ) # store predictions in each column 
-# #     for(it in 1:itrs){
-# #         set.seed(it)
-# #         oecRidgeWS <- ridgeAltSpec0(data = full, 
-# #                                     betaStart = matrix(rnorm(K*p),ncol = K),#warmRes$beta, 
-# #                                     wStart = wZeroOut,
-# #                                     lambdaVec = tuneParam$lambda, 
-# #                                     mu = stackParam, 
-# #                                     Stackindx = indx1, # rows corresponding to test country
-# #                                     nnlsInd = TRUE,
-# #                                     tol = 0.001,
-# #                                     objCriteria = TRUE,
-# #                                     eta = e,
-# #                                     dataSplit = 1,
-# #                                     projs = 0,
-# #                                     Avg = FALSE,
-# #                                     wUpdate = "glmnet",
-# #                                     sigK = sigK,
-# #                                     sigStack = sigStack,
-# #                                     standardize = TRUE,
-# #                                     sampSzWeight = sampSzWeight,
-# #                                     weights = Diagonal( nrow(full)),
-# #                                     low = psiL / K,
-# #                                     up = 0.25,#Inf,
-# #                                     stackTol = 1e-9
-# #         )
-# #         
-# #         pMat[,it] <- oecRidgePred(data = X_test[,-1],
-# #                                   mod = oecRidgeWS)
-# #         
-# #     }
-# #     
-# #     predsVecOEC <- rowMeans( pMat ) # average predictions from the different runs
-# #     #}
-# #     resVec <- c(resVec, predsVecOEC )
-# #     
-# #     print(
-# #         resMat[iterNum, 31] <- sqrt( mean( (test$Y - predsVecOEC)^2 ) )
-# #         )
-# # }
-# # 
-# # 
-# # 
-# # df <- data.frame( y = c(predsCount, predsStack, resVec),
-# #                   x = as.factor(rep(c("Country", "Stacking", etasVec), each = nrow(X_test))))
-# # 
-# # head(df)
-# # indx2 <- 1:nrow(X_test)
-# # 
-# # df2 <- data.frame( x = indx2, y = test$Y) 
-# # df <- cbind(df, df2)
-# # colnames(df) <- c("y", "eta", "x2", "y2")
-# # ggplot(df, aes(x= x2, y=y2)) + geom_point() +
-# #     geom_line(aes(y = y, color = eta)) + 
-# #     #scale_color_manual(values = c("orange", "red", "darkred","yellow", "black", "blue" )) +
-# #     xlab("Month") + ylab("Mortality") + ylim(13, 21.5)
-# # # France_stacking0_test   650 550
-# # 
-# # ## only country and stacking
-# # 
-# # ggplot(df[1:100,], aes(x= x2, y=y2)) + geom_point() +
-# #     geom_line(aes(y = y, color = eta)) + 
-# #     scale_color_manual(values = c("black", "blue")) +
-# #     xlab("Month") + ylab("Mortality")+ ylim(13, 21.5)
-# # 
-# # # France_stacking0_test_Country     650 550
-# # 
-# # 
-# # 
-# # 
-# # resVec <- c()
-# # etasVec <- c(0.0001,  1)
-# # for(e in etasVec){
-# #     
-# #     indx1 <- which(full$Study == test_country)
-# #     
-# #     pMat <- matrix(ncol = itrs, nrow = nrow(X_test) ) # store predictions in each column 
-# #     for(it in 1:itrs){
-# #         set.seed(it)
-# #         oecRidgeWS <- ridgeAltSpec0(data = full, 
-# #                                     betaStart = warmRes$beta, 
-# #                                     wStart = wZeroOut,
-# #                                     lambdaVec = tuneParam$lambda, 
-# #                                     mu = e, 
-# #                                     Stackindx = indx1, # rows corresponding to test country
-# #                                     nnlsInd = TRUE,
-# #                                     tol = 0.001,
-# #                                     objCriteria = TRUE,
-# #                                     eta = 0.5,
-# #                                     dataSplit = 1,
-# #                                     projs = 0,
-# #                                     Avg = FALSE,
-# #                                     wUpdate = "glmnet",
-# #                                     sigK = sigK,
-# #                                     sigStack = sigStack,
-# #                                     standardize = TRUE,
-# #                                     sampSzWeight = 7,#sampSzWeight,
-# #                                     weights = Diagonal( nrow(full)),
-# #                                     low = psiL / K,
-# #                                     up = Inf,
-# #                                     stackTol = 1e-9
-# #         )
-# #         
-# #         pMat[,it] <- oecRidgePred(data = X_test[,-1],
-# #                                   mod = oecRidgeWS)
-# #         
-# #     }
-# #     
-# #     predsVecOEC <- rowMeans( pMat ) # average predictions from the different runs
-# #     #}
-# #     resVec <- c(resVec, predsVecOEC )
-# #     
-# #     print(
-# #         resMat[iterNum, 31] <- sqrt( mean( (test$Y - predsVecOEC)^2 ) )
-# #     )
-# # }
-# # 
-# # 
-# # 
-# # df <- data.frame( y = c(predsCount, predsStack, resVec),
-# #                   x = as.factor(rep(c("Country", "Stacking", etasVec), each = nrow(X_test))))
-# # 
-# # head(df)
-# # indx2 <- 1:nrow(X_test)
-# # 
-# # df2 <- data.frame( x = indx2, y = test$Y) 
-# # df <- cbind(df, df2)
-# # colnames(df) <- c("y", "eta", "x2", "y2")
-# # ggplot(df, aes(x= x2, y=y2)) + geom_point() +
-# #     geom_line(aes(y = y, color = eta)) + 
-# #    # scale_color_manual(values = c("orange", "red", "darkred","yellow", "black", "blue" )) +
-# #     xlab("Month") + ylab("Mortality") + ylim(15, 21.5)
-# # # France_stacking0_test   650 550
-# # 
-# # ## only country and stacking
-# # 
-# # ggplot(df[1:100,], aes(x= x2, y=y2)) + geom_point() +
-# #     geom_line(aes(y = y, color = eta)) + 
-# #     scale_color_manual(values = c("black", "blue")) +
-# #     xlab("Month") + ylab("Mortality")+ ylim(15, 21.5)
-
+# zero out Country specific stacking
+w <- wZeroOut # wZeroOut
+preds <- w[1] + rbind(X[trainIndx,], X_test) %*% betas %*% w[-1]
+lines(y = preds, 
+      x = 1:length( c(full$Y[trainIndx], test$Y) ),
+      col = "red", lwd = 1.5)
