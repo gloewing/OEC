@@ -6,3 +6,4 @@
 
 Data (output files) from simulations are in "simsMort4"
 
+Code to run simulations (on a cluster) is in the "Code" file. Necessary funcitons for this code are in the "Functions" file of the main repository.
