@@ -1,3 +1,0 @@
-"sims22 Figures Final.R" has the code to make figures. The other code runs the simulations on the cluster (really only need one of them because you have to set runNum equal to the row of the "param22" file you want to set parameters to). "param22" sets the parameters (it has many rows).
-
-Either "zero" or "cvCF" is good for the study-specific tuning. Include one in main part of manuscript and other in supplement. Figures made but not uploaded to paper. Also in paper may need to rename files with "_zero" and "_cvCF'
