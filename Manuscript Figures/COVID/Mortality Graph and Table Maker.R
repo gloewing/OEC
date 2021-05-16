@@ -25,17 +25,17 @@ mnYr <- 100
         
         for(xPro in proVec){
             
-            setwd("~/Desktop/Research/mort17")
+            # setwd("~/Desktop/Research/mort17")
+            setwd("~/Desktop/OEC/Manuscript Figures/COVID/mort17")
             fileNm <- paste0("mrtNew_eta0.5_xPro_", xPro, "_etaTn_cv_etaSpec_cvSpec_Wcv_cv_Wspec_FALSE_Wspec0_FALSE_TScv_FALSE_sclX_TRUE_glm_FALSE_hr_10_oecTn_",tn, "_stdTn_", tn, "_tnOr_FALSE_tstCntMn_12.nH",nH,"_mnSt_-01-01_mnTr_", mnYr, "_fld_5_smpSzWt_1")
             if(file.exists(fileNm)){
-                
-           
+
             a <- read.csv( fileNm )
             
             # remove southern hemisphere
             a <- a %>% tibble %>% dplyr::filter( !country.1 %in% c("New Zealand", "Chile", "Australia DCD") )
 
-            setwd("~/Desktop/Research Final/Mortality/Figures/Final Figures/Final Covid Figures/Mort17")
+            # setwd("~/Desktop/Research Final/Mortality/Figures/Final Figures/Final Covid Figures/Mort17")
             par(mfrow = c(1,1))
             
             mat <- mat2 <- mat3 <- mat4 <- mat5 <- mat6 <- matrix(NA, nrow(a), ncol = length(yrs))
@@ -153,222 +153,324 @@ mnYr <- 100
             df <- df[!is.na(df$RMSE),]
             df$Year <- as.factor(df$Year)
             
-            plt = df %>% tibble %>%  filter(df$Method %in% c("Specialist", "Zero Out")) %>%
-                # dplyr::filter(key %in% c("Generalist", "Merged")) %>%
-                # dplyr::filter(x %in% c(0.01, 0.5, 1.5) ) %>%
-                # dplyr::filter(cl == 3) %>%
-                # dplyr::filter(n == 300) %>%
-                #dplyr::filter(Method == "OLS") %>%
-                ggplot(aes( y = RMSE, x = Year, fill = Regularization )) + # 
-               facet_wrap( ~ Method, nrow = 1) +
-                geom_boxplot(
-                    lwd = 1.5, 
-                    fatten = 0.5, 
-                    alpha = 0.5 
-                ) + 
-                geom_hline(yintercept=1, 
-                           linetype="dashed", 
-                           color = "black", 
-                           size = rel(0.5),
-                           alpha = 0.7) + #
-                #ylim(0, 2) +
-                ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Stacking}}$') )+ 
-                xlab(TeX('Year')) + 
-                # scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00", "#525252", "grey")) + # 
-                scale_fill_manual(values = c("red", "blue")) + #"red", "blue", "green", "#0868ac", "#E69F00", "#525252", "grey")) +
-                theme_classic(base_size = 12) +
-                ylim(0.4, 1.1) + 
-                theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
-                       axis.text=element_text(face="bold",color="black", size=rel(1.75)),
-                       axis.title = element_text(face="bold", color="black", size=rel(1.75)),
-                       legend.key.size = unit(2, "line"), # added in to increase size
-                       legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
-                       legend.title = element_text(face="bold", color="black", size = rel(2)),
-                       strip.text.x = element_text(face="bold", color="black", size = rel(2)) #,
-                       #legend.position ="none"
-                ) + ggtitle(paste0("OEC: ", mnYr, " Minimum Training Months"))  +  
-                scale_x_discrete(breaks = seq(2003,2019)[c(1, 5,10,15, 17)]) 
+            geom_hline(yintercept = 1,
+                       linetype   = 2,
+                       color      = "darkgray") +
+                geom_boxplot(size         = 0.20,
+                             outlier.size = 0.50) +
+                geom_boxplot(size          = 0.20,
+                             color         = "black",
+                             outlier.color = NA)
+            
+            plt <- df %>% 
+                as_tibble() %>%
+                filter(df$Method %in% c("Specialist", "Zero Out")) %>%
+                mutate(Year = as.numeric(as.character(Year))) %>%
+                dplyr::filter(Year >= 2010) %>%
+                mutate(Year = factor(Year)) %>%
+                ggplot(aes(y = RMSE, x = Year, fill = Regularization)) + 
+                facet_wrap(~Method) +
+                geom_hline(yintercept = 1,
+                           linetype   = 2,
+                           color      = "darkgray") +
+                geom_boxplot(size          = 0.20,
+                             outlier.size  = 0.50,
+                             fill          = "#cb181d") +
+                labs(y        = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Stacking}}$'),
+                     x        = TeX('Year'),
+                     title    = paste0("OEC: ", mnYr, " Minimum Training Months"),
+                     subtitle = "Regularization: OLS") +
+                coord_cartesian(ylim = c(0.4, 1.1)) +
+                theme_bw() +
+                theme(axis.text.x = element_text(angle = 45, hjust = 1))
+        
+            # df %>%
+            #     as_tibble() %>%
+            #     filter(df$Method %in% c("Specialist", "Zero Out")) %>%
+            #     # dplyr::filter(key %in% c("Generalist", "Merged")) %>%
+            #     # dplyr::filter(x %in% c(0.01, 0.5, 1.5) ) %>%
+            #     # dplyr::filter(cl == 3) %>%
+            #     # dplyr::filter(n == 300) %>%
+            #     #dplyr::filter(Method == "OLS") %>%
+            #    ggplot(aes(y = RMSE, x = Year, fill = Regularization)) +
+            #    facet_wrap(~ Method, nrow = 1) +
+            #     geom_boxplot(
+            #         lwd = 1.5,
+            #         fatten = 0.5,
+            #         alpha = 0.5
+            #     ) +
+            #     geom_hline(yintercept=1,
+            #                linetype="dashed",
+            #                color = "black",
+            #                size = rel(0.5),
+            #                alpha = 0.7) + #
+            #     #ylim(0, 2) +
+            #     ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Stacking}}$') )+
+            #     xlab(TeX('Year')) +
+            #     # scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00", "#525252", "grey")) + #
+            #     scale_fill_manual(values = c("red", "blue")) + #"red", "blue", "green", "#0868ac", "#E69F00", "#525252", "grey")) +
+            #     theme_classic(base_size = 12) +
+            #     ylim(0.4, 1.1) +
+            #     theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
+            #            axis.text=element_text(face="bold",color="black", size=rel(1.75)),
+            #            axis.title = element_text(face="bold", color="black", size=rel(1.75)),
+            #            legend.key.size = unit(2, "line"), # added in to increase size
+            #            legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
+            #            legend.title = element_text(face="bold", color="black", size = rel(2)),
+            #            strip.text.x = element_text(face="bold", color="black", size = rel(2)) #,
+            #            #legend.position ="none"
+            #     ) + ggtitle(paste0("OEC: ", mnYr, " Minimum Training Months"))  +
+            #     scale_x_discrete(breaks = seq(2003,2019)[c(1, 5,10,15, 17)])
 
-            
-            
-            
             setwd("~/Desktop/Research Final/Mortality/Figures/Final Figures/Final Covid Figures/Mort17")
             ggsave( paste("Mortality_Specialist_ZeroOut_OLS_Ridge_New_", mnYr, ".png"),
                     plot = plt,
-                    width = 22,
-                    height = 7 
-            )
+                    width  = 8,
+                    height = 4)
             
             
-            plt = df %>% tibble %>%  filter(df$Method %in% c("Spec_bestObj/Stack", "ZeroOut_bestObj/Stack0")) %>%
-                # dplyr::filter(key %in% c("Generalist", "Merged")) %>%
-                # dplyr::filter(x %in% c(0.01, 0.5, 1.5) ) %>%
-                # dplyr::filter(cl == 3) %>%
-                # dplyr::filter(n == 300) %>%
-                #dplyr::filter(Method == "OLS") %>%
-                ggplot(aes( y = RMSE, x = Year, fill = Regularization )) + # 
-                facet_wrap( ~ Method, nrow = 1) +
-                geom_boxplot(
-                    lwd = 1.5, 
-                    fatten = 0.5, 
-                    alpha = 0.5 
-                ) + 
-                geom_hline(yintercept=1, 
-                           linetype="dashed", 
-                           color = "black", 
-                           size = rel(0.5),
-                           alpha = 0.7) + #
-                #ylim(0, 2) +
-                ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Stacking}}$') )+ 
-                xlab(TeX('Year')) + 
-                # scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00", "#525252", "grey")) + # 
-                scale_fill_manual(values = c("red", "blue")) + #"red", "blue", "green", "#0868ac", "#E69F00", "#525252", "grey")) +
-                theme_classic(base_size = 12) +
-                ylim(0.4, 1.1) + 
-                theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
-                       axis.text=element_text(face="bold",color="black", size=rel(1.75)),
-                       axis.title = element_text(face="bold", color="black", size=rel(1.75)),
-                       legend.key.size = unit(2, "line"), # added in to increase size
-                       legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
-                       legend.title = element_text(face="bold", color="black", size = rel(2)),
-                       strip.text.x = element_text(face="bold", color="black", size = rel(2)) #,
-                       #legend.position ="none"
-                ) + ggtitle(paste0("OEC: ", mnYr, " Minimum Training Months")) +  
-                scale_x_discrete(breaks = seq(2003,2019)[c(1, 5,10,15, 17)]) 
-            
-            
+            plt <- df %>% 
+                as_tibble() %>% 
+                filter(df$Method %in% c("Spec_bestObj/Stack", "ZeroOut_bestObj/Stack0")) %>%
+                mutate(Year = as.numeric(as.character(Year))) %>%
+                dplyr::filter(Year >= 2010) %>%
+                mutate(Year = factor(Year)) %>%
+                ggplot(aes(y = RMSE, x = Year, fill = Regularization)) + 
+                facet_wrap(~Method) +
+                geom_hline(yintercept = 1,
+                           linetype   = 2,
+                           color      = "darkgray") +
+                geom_boxplot(size          = 0.20,
+                             outlier.size  = 0.50,
+                             fill          = "#cb181d") +
+                labs(y        = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Stacking}}$'),
+                     x        = TeX('Year'),
+                     title    = paste0("OEC: ", mnYr, " Minimum Training Months"),
+                     subtitle = "Regularization: OLS") +
+                coord_cartesian(ylim = c(0, 2)) +
+                theme_bw() +
+                theme(axis.text.x = element_text(angle = 45, hjust = 1))
+            # 
+            # df %>% tibble %>%  filter(df$Method %in% c("Spec_bestObj/Stack", "ZeroOut_bestObj/Stack0")) %>%
+            #     # dplyr::filter(key %in% c("Generalist", "Merged")) %>%
+            #     # dplyr::filter(x %in% c(0.01, 0.5, 1.5) ) %>%
+            #     # dplyr::filter(cl == 3) %>%
+            #     # dplyr::filter(n == 300) %>%
+            #     #dplyr::filter(Method == "OLS") %>%
+            #     ggplot(aes( y = RMSE, x = Year, fill = Regularization )) + # 
+            #     facet_wrap( ~ Method, nrow = 1) +
+            #     geom_boxplot(
+            #         lwd = 1.5, 
+            #         fatten = 0.5, 
+            #         alpha = 0.5 
+            #     ) + 
+            #     geom_hline(yintercept=1, 
+            #                linetype="dashed", 
+            #                color = "black", 
+            #                size = rel(0.5),
+            #                alpha = 0.7) + #
+            #     #ylim(0, 2) +
+            #     ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Stacking}}$') )+ 
+            #     xlab(TeX('Year')) + 
+            #     # scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00", "#525252", "grey")) + # 
+            #     scale_fill_manual(values = c("red", "blue")) + #"red", "blue", "green", "#0868ac", "#E69F00", "#525252", "grey")) +
+            #     theme_classic(base_size = 12) +
+            #     ylim(0.4, 1.1) + 
+            #     theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
+            #            axis.text=element_text(face="bold",color="black", size=rel(1.75)),
+            #            axis.title = element_text(face="bold", color="black", size=rel(1.75)),
+            #            legend.key.size = unit(2, "line"), # added in to increase size
+            #            legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
+            #            legend.title = element_text(face="bold", color="black", size = rel(2)),
+            #            strip.text.x = element_text(face="bold", color="black", size = rel(2)) #,
+            #            #legend.position ="none"
+            #     ) + ggtitle(paste0("OEC: ", mnYr, " Minimum Training Months")) +  
+            #     scale_x_discrete(breaks = seq(2003,2019)[c(1, 5,10,15, 17)]) 
             
             setwd("~/Desktop/Research Final/Mortality/Figures/Final Figures/Final Covid Figures/Mort17")
             ggsave( paste("Mortality_Specialist_ZeroOut_OLS_Ridge_NewBestObj_", mnYr, ".png"),
-                    plot = plt,
-                    width = 22,
-                    height = 7 
-            )
+                    plot   = plt,
+                    width  = 8,
+                    height = 4)
             
-            
-            plt = df %>% tibble %>% filter(df$Method %in% c("Spec/noLin", "ZeroOut/noLin")) %>%
-                ggplot(aes( y = RMSE, x = Year, fill = Regularization )) + # 
-                facet_wrap( ~ Method, nrow = 1) +
-                geom_boxplot(
-                    lwd = 1.5, 
-                    fatten = 0.5, 
-                    alpha = 0.5 
-                ) + 
-                geom_hline(yintercept=1, 
-                           linetype="dashed", 
-                           color = "black", 
-                           size = rel(0.5),
-                           alpha = 0.7) + #
-                #ylim(0, 2) +
-                ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Stacking}}$') )+ 
-                xlab(TeX('Year')) + 
-                # scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00", "#525252", "grey")) + # 
-                scale_fill_manual(values = c("red", "blue")) + #"red", "blue", "green", "#0868ac", "#E69F00", "#525252", "grey")) +
-                theme_classic(base_size = 12) +
-                ylim(0.4, 1.1) + 
-                theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
-                       axis.text=element_text(face="bold",color="black", size=rel(1.75)),
-                       axis.title = element_text(face="bold", color="black", size=rel(1.75)),
-                       legend.key.size = unit(2, "line"), # added in to increase size
-                       legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
-                       legend.title = element_text(face="bold", color="black", size = rel(2)),
-                       strip.text.x = element_text(face="bold", color="black", size = rel(2)) #,
-                       #legend.position ="none"
-                ) + ggtitle(paste0("OEC: ", mnYr, " Minimum Training Months")) +  
-                scale_x_discrete(breaks = seq(2003,2019)[c(1, 5,10,15, 17)]) 
-            
-            
-            
+            plt <- df %>% 
+                as_tibble() %>% 
+                filter(df$Method %in% c("Spec/noLin", "ZeroOut/noLin")) %>%
+                mutate(Year = as.numeric(as.character(Year))) %>%
+                dplyr::filter(Year >= 2010) %>%
+                mutate(Year = factor(Year)) %>%
+                ggplot(aes(y = RMSE, x = Year, fill = Regularization)) + 
+                facet_wrap(~Method) +
+                geom_hline(yintercept = 1,
+                           linetype   = 2,
+                           color      = "darkgray") +
+                geom_boxplot(size          = 0.20,
+                             outlier.size  = 0.50,
+                             fill          = "#cb181d") +
+                labs(y        = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Stacking}}$'),
+                     x        = TeX('Year'),
+                     title    = paste0("OEC: ", mnYr, " Minimum Training Months"),
+                     subtitle = "Regularization: OLS") +
+                coord_cartesian(ylim = c(0.4, 1.1)) +
+                theme_bw() +
+                theme(axis.text.x = element_text(angle = 45, hjust = 1))
+        
+            # df %>% tibble %>% filter(df$Method %in% c("Spec/noLin", "ZeroOut/noLin")) %>%
+            #     ggplot(aes( y = RMSE, x = Year, fill = Regularization )) + # 
+            #     facet_wrap( ~ Method, nrow = 1) +
+            #     geom_boxplot(
+            #         lwd = 1.5, 
+            #         fatten = 0.5, 
+            #         alpha = 0.5 
+            #     ) + 
+            #     geom_hline(yintercept=1, 
+            #                linetype="dashed", 
+            #                color = "black", 
+            #                size = rel(0.5),
+            #                alpha = 0.7) + #
+            #     #ylim(0, 2) +
+            #     ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Stacking}}$') )+ 
+            #     xlab(TeX('Year')) + 
+            #     # scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00", "#525252", "grey")) + # 
+            #     scale_fill_manual(values = c("red", "blue")) + #"red", "blue", "green", "#0868ac", "#E69F00", "#525252", "grey")) +
+            #     theme_classic(base_size = 12) +
+            #     ylim(0.4, 1.1) + 
+            #     theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
+            #            axis.text=element_text(face="bold",color="black", size=rel(1.75)),
+            #            axis.title = element_text(face="bold", color="black", size=rel(1.75)),
+            #            legend.key.size = unit(2, "line"), # added in to increase size
+            #            legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
+            #            legend.title = element_text(face="bold", color="black", size = rel(2)),
+            #            strip.text.x = element_text(face="bold", color="black", size = rel(2)) #,
+            #            #legend.position ="none"
+            #     ) + ggtitle(paste0("OEC: ", mnYr, " Minimum Training Months")) +  
+            #     scale_x_discrete(breaks = seq(2003,2019)[c(1, 5,10,15, 17)]) 
+        
             setwd("~/Desktop/Research Final/Mortality/Figures/Final Figures/Final Covid Figures/Mort17")
             ggsave( paste("Mortality_Specialist_ZeroOut_OLS_Ridge_New_NoLinear_", mnYr, ".png"),
-                    plot = plt,
-                    width = 22,
-                    height = 7 
-            )
+                    plot   = plt,
+                    width  = 8,
+                    height = 4)
             
+            plt <- df %>% 
+                as_tibble() %>% 
+                filter(df$Method %in% c("Spec_bestObj/noLin", "ZeroOut_bestObj/noLin")) %>%
+                mutate(Year = as.numeric(as.character(Year))) %>%
+                dplyr::filter(Year >= 2010) %>%
+                mutate(Year = factor(Year)) %>%
+                ggplot(aes(y = RMSE, x = Year, fill = Regularization)) + 
+                facet_wrap(~Method) +
+                geom_hline(yintercept = 1,
+                           linetype   = 2,
+                           color      = "darkgray") +
+                geom_boxplot(size          = 0.20,
+                             outlier.size  = 0.50,
+                             fill          = "#cb181d") +
+                labs(y        = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Stacking}}$'),
+                     x        = TeX('Year'),
+                     title    = paste0("OEC: ", mnYr, " Minimum Training Months"),
+                     subtitle = "Regularization: OLS") +
+                coord_cartesian(ylim = c(0.4, 1.1)) +
+                theme_bw() +
+                theme(axis.text.x = element_text(angle = 45, hjust = 1))
             
-            
-            plt = df %>% tibble %>% filter(df$Method %in% c("Spec_bestObj/noLin", "ZeroOut_bestObj/noLin")) %>%
-                ggplot(aes( y = RMSE, x = Year, fill = Regularization )) + # 
-                facet_wrap( ~ Method, nrow = 1) +
-                geom_boxplot(
-                    lwd = 1.5, 
-                    fatten = 0.5, 
-                    alpha = 0.5 
-                ) + 
-                geom_hline(yintercept=1, 
-                           linetype="dashed", 
-                           color = "black", 
-                           size = rel(0.5),
-                           alpha = 0.7) + #
-                #ylim(0, 2) +
-                ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Stacking}}$') )+ 
-                xlab(TeX('Year')) + 
-                # scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00", "#525252", "grey")) + # 
-                scale_fill_manual(values = c("red", "blue")) + #"red", "blue", "green", "#0868ac", "#E69F00", "#525252", "grey")) +
-                theme_classic(base_size = 12) +
-                ylim(0.4, 1.1) + 
-                theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
-                       axis.text=element_text(face="bold",color="black", size=rel(1.75)),
-                       axis.title = element_text(face="bold", color="black", size=rel(1.75)),
-                       legend.key.size = unit(2, "line"), # added in to increase size
-                       legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
-                       legend.title = element_text(face="bold", color="black", size = rel(2)),
-                       strip.text.x = element_text(face="bold", color="black", size = rel(2)) #,
-                       #legend.position ="none"
-                ) + ggtitle(paste0("OEC: ", mnYr, " Minimum Training Months")) +  
-                scale_x_discrete(breaks = seq(2003,2019)[c(1, 5,10,15, 17)]) 
+            # df %>% tibble %>% filter(df$Method %in% c("Spec_bestObj/noLin", "ZeroOut_bestObj/noLin")) %>%
+            #     ggplot(aes( y = RMSE, x = Year, fill = Regularization )) + # 
+            #     facet_wrap( ~ Method, nrow = 1) +
+            #     geom_boxplot(
+            #         lwd = 1.5, 
+            #         fatten = 0.5, 
+            #         alpha = 0.5 
+            #     ) + 
+            #     geom_hline(yintercept=1, 
+            #                linetype="dashed", 
+            #                color = "black", 
+            #                size = rel(0.5),
+            #                alpha = 0.7) + #
+            #     #ylim(0, 2) +
+            #     ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Stacking}}$') )+ 
+            #     xlab(TeX('Year')) + 
+            #     # scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00", "#525252", "grey")) + # 
+            #     scale_fill_manual(values = c("red", "blue")) + #"red", "blue", "green", "#0868ac", "#E69F00", "#525252", "grey")) +
+            #     theme_classic(base_size = 12) +
+            #     ylim(0.4, 1.1) + 
+            #     theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
+            #            axis.text=element_text(face="bold",color="black", size=rel(1.75)),
+            #            axis.title = element_text(face="bold", color="black", size=rel(1.75)),
+            #            legend.key.size = unit(2, "line"), # added in to increase size
+            #            legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
+            #            legend.title = element_text(face="bold", color="black", size = rel(2)),
+            #            strip.text.x = element_text(face="bold", color="black", size = rel(2)) #,
+            #            #legend.position ="none"
+            #     ) + ggtitle(paste0("OEC: ", mnYr, " Minimum Training Months")) +  
+            #     scale_x_discrete(breaks = seq(2003,2019)[c(1, 5,10,15, 17)]) 
             
             
             
             setwd("~/Desktop/Research Final/Mortality/Figures/Final Figures/Final Covid Figures/Mort17")
             ggsave( paste("Mortality_Specialist_ZeroOut_OLS_Ridge_New_NoLinearBest_", mnYr, ".png"),
-                    plot = plt,
-                    width = 22,
-                    height = 7 
-            )
+                    plot   = plt,
+                    width  = 8,
+                    height = 4)
             
+            plt = df %>% 
+                as_tibble() %>% 
+                filter(df$Method %in% c("Spec_bestObj/Spec", "ZeroOut_bestObj/OEC0")) %>%
+                mutate(Year = as.numeric(as.character(Year))) %>%
+                dplyr::filter(Year >= 2010) %>%
+                mutate(Year = factor(Year)) %>%
+                ggplot(aes(y = RMSE, x = Year, fill = Regularization)) + 
+                facet_wrap(~Method) +
+                geom_hline(yintercept = 1,
+                           linetype   = 2,
+                           color      = "darkgray") +
+                geom_boxplot(size          = 0.20,
+                             outlier.size  = 0.50,
+                             fill          = "#cb181d") +
+                labs(y        = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Stacking}}$'),
+                     x        = TeX('Year'),
+                     title    = paste0("OEC: ", mnYr, " Minimum Training Months"),
+                     subtitle = "Regularization: OLS") +
+                coord_cartesian(ylim = c(0.4, 1.1)) +
+                theme_bw() +
+                theme(axis.text.x = element_text(angle = 45, hjust = 1))
             
-            
-            plt = df %>% tibble %>% filter(df$Method %in% c("Spec_bestObj/Spec", "ZeroOut_bestObj/OEC0")) %>%
-                ggplot(aes( y = RMSE, x = Year, fill = Regularization )) + # 
-                facet_wrap( ~ Method, nrow = 1) +
-                geom_boxplot(
-                    lwd = 1.5, 
-                    fatten = 0.5, 
-                    alpha = 0.5 
-                ) + 
-                geom_hline(yintercept=1, 
-                           linetype="dashed", 
-                           color = "black", 
-                           size = rel(0.5),
-                           alpha = 0.7) + #
-                #ylim(0, 2) +
-                ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Stacking}}$') )+ 
-                xlab(TeX('Year')) + 
-                # scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00", "#525252", "grey")) + # 
-                scale_fill_manual(values = c("red", "blue")) + #"red", "blue", "green", "#0868ac", "#E69F00", "#525252", "grey")) +
-                theme_classic(base_size = 12) +
-                ylim(0.4, 1.1) + 
-                theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
-                       axis.text=element_text(face="bold",color="black", size=rel(1.75)),
-                       axis.title = element_text(face="bold", color="black", size=rel(1.75)),
-                       legend.key.size = unit(2, "line"), # added in to increase size
-                       legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
-                       legend.title = element_text(face="bold", color="black", size = rel(2)),
-                       strip.text.x = element_text(face="bold", color="black", size = rel(2)) #,
-                       #legend.position ="none"
-                ) + ggtitle(paste0("OEC: ", mnYr, " Minimum Training Months")) +  
-                scale_x_discrete(breaks = seq(2003,2019)[c(1, 5,10,15, 17)]) 
-            
-            
+            # df %>% tibble %>% filter(df$Method %in% c("Spec_bestObj/Spec", "ZeroOut_bestObj/OEC0")) %>%
+            #     ggplot(aes( y = RMSE, x = Year, fill = Regularization )) + # 
+            #     facet_wrap( ~ Method, nrow = 1) +
+            #     geom_boxplot(
+            #         lwd = 1.5, 
+            #         fatten = 0.5, 
+            #         alpha = 0.5 
+            #     ) + 
+            #     geom_hline(yintercept=1, 
+            #                linetype="dashed", 
+            #                color = "black", 
+            #                size = rel(0.5),
+            #                alpha = 0.7) + #
+            #     #ylim(0, 2) +
+            #     ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Stacking}}$') )+ 
+            #     xlab(TeX('Year')) + 
+            #     # scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00", "#525252", "grey")) + # 
+            #     scale_fill_manual(values = c("red", "blue")) + #"red", "blue", "green", "#0868ac", "#E69F00", "#525252", "grey")) +
+            #     theme_classic(base_size = 12) +
+            #     ylim(0.4, 1.1) + 
+            #     theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
+            #            axis.text=element_text(face="bold",color="black", size=rel(1.75)),
+            #            axis.title = element_text(face="bold", color="black", size=rel(1.75)),
+            #            legend.key.size = unit(2, "line"), # added in to increase size
+            #            legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
+            #            legend.title = element_text(face="bold", color="black", size = rel(2)),
+            #            strip.text.x = element_text(face="bold", color="black", size = rel(2)) #,
+            #            #legend.position ="none"
+            #     ) + ggtitle(paste0("OEC: ", mnYr, " Minimum Training Months")) +  
+            #     scale_x_discrete(breaks = seq(2003,2019)[c(1, 5,10,15, 17)]) 
             
             setwd("~/Desktop/Research Final/Mortality/Figures/Final Figures/Final Covid Figures/Mort17")
             ggsave( paste("Mortality_Specialist_ZeroOut_OLS_Ridge_New_OldvsNew_", mnYr, ".png"),
-                    plot = plt,
-                    width = 22,
-                    height = 7 
-            )
+                    plot   = plt,
+                    width  = 8,
+                    height = 4)
     }
 }
 e <- cbind(a, a$oec_country0 / a$stacking_country_zeroOut)
@@ -457,12 +559,13 @@ for(mnYr in minYrs){
         
         for(xPro in proVec){
             
-            setwd("~/Desktop/Research/mort17")
+            # setwd("~/Desktop/Research/mort17")
+            setwd("~/Desktop/OEC/Manuscript Figures/COVID/mort17")
             a <- read.csv( paste0("mrtNew_eta0.5_xPro_", xPro, "_etaTn_cv_etaSpec_cvSpec_Wcv_cv_Wspec_FALSE_Wspec0_FALSE_TScv_FALSE_sclX_TRUE_glm_FALSE_hr_10_oecTn_",tn, "_stdTn_", tn, "_tnOr_FALSE_tstCntMn_12.nH",nH,"_mnSt_-01-01_mnTr_", mnYr, "_fld_5_smpSzWt_1") )
             
             #mrtTmA_eta0.5_xPro_4_etaTn_cv_etaSpec_cvSpec_Wcv_cv_Wspec_FALSE_Wspec0_FALSE_TScv_FALSE_sclX_TRUE_glm_FALSE_hr_10_oecTn_zero_stdTn_zero_tnOr_FALSE_tstCntMn_12.nHFALSE_mnSt_-03-01_mnTr_150_smpSzWt_1
             
-            setwd("~/Desktop/Research Final/Mortality/Figures/Final Figures/Final Covid Figures/Mort17")
+            # setwd("~/Desktop/Research Final/Mortality/Figures/Final Figures/Final Covid Figures/Mort17")
             par(mfrow = c(1,3))
             
             mat <- mat1 <- mat2 <- mat3 <- matrix(NA, nrow(a), ncol = length(yrs))
@@ -523,89 +626,136 @@ for(mnYr in minYrs){
     df$Year <- as.factor(df$Year)
     
     # ols
-    plt = df %>% tibble %>% 
-        # dplyr::filter(key %in% c("Generalist", "Merged")) %>%
-        # dplyr::filter(x %in% c(0.01, 0.5, 1.5) ) %>%
-        # dplyr::filter(cl == 3) %>%
-        # dplyr::filter(n == 300) %>%
+    plt <- df %>%
+        as_tibble() %>%
+        mutate(Year = as.numeric(as.character(Year))) %>%
+        dplyr::filter(Year >= 2010) %>%
+        mutate(Year = factor(Year)) %>%
         dplyr::filter(Regularization == "OLS") %>%
-        ggplot(aes( y = RMSE, x = Year, fill = Method )) + # 
-        # facet_wrap( ~ Method, nrow = 1) +
-        geom_boxplot(
-            lwd = 1.5, 
-            fatten = 0.5, 
-            alpha = 0.5 
-        ) + 
-        geom_hline(yintercept=1, 
-                   linetype="dashed", 
-                   color = "black", 
-                   size = rel(0.5),
-                   alpha = 0.7) + #
-        #ylim(0, 2) +
-        ylab(TeX('$\\mathbf{RMSE/RMSE_{Country}}$') )+ 
-        xlab(TeX('Year')) + 
-        # scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00", "#525252", "grey")) + # 
-        scale_fill_manual(values = c("red", "blue", "green", "#0868ac")) + # , "#E69F00" 
-        theme_classic(base_size = 12) +
-        ylim(0.1, 1.1) + 
-        theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
-               axis.text=element_text(face="bold",color="black", size=rel(1.75)),
-               axis.title = element_text(face="bold", color="black", size=rel(1.75)),
-               legend.key.size = unit(2, "line"), # added in to increase size
-               legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
-               legend.title = element_text(face="bold", color="black", size = rel(2)),
-               strip.text.x = element_text(face="bold", color="black", size = rel(2)) #,
-               #legend.position ="none"
-        ) #+ ggtitle(paste0("OEC: ", mnYr, " Minimum Training Months"))
+        ggplot(aes(y = RMSE, x = Year, fill = Method, color = Method)) + 
+        geom_hline(yintercept = 1,
+                   linetype   = 2,
+                   color      = "darkgray") +
+        geom_boxplot(size          = 0.20,
+                     outlier.size  = 0.50) +
+        geom_boxplot(size          = 0.20,
+                     color         = "black",
+                     outlier.color = NA) +
+        labs(y        = TeX('$\\mathbf{RMSE/RMSE_{Country}}$'),
+             x        = TeX('Year'),
+             title    = paste0("OEC: ", mnYr, " Minimum Training Months"),
+             subtitle = "Regularization: OLS") +
+        scale_fill_manual(values = c("#B81D13", "#2171b5", "#EFB700", "#008450")) +
+        scale_color_manual(values = c("#B81D13", "#2171b5", "#EFB700", "#008450")) +
+        coord_cartesian(ylim = c(0.1, 1.1)) +
+        theme_bw() +
+        theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    
+    # df %>% tibble %>% 
+    #     # dplyr::filter(key %in% c("Generalist", "Merged")) %>%
+    #     # dplyr::filter(x %in% c(0.01, 0.5, 1.5) ) %>%
+    #     # dplyr::filter(cl == 3) %>%
+    #     # dplyr::filter(n == 300) %>%
+    #     dplyr::filter(Regularization == "OLS") %>%
+    #     ggplot(aes( y = RMSE, x = Year, fill = Method )) + # 
+    #     # facet_wrap( ~ Method, nrow = 1) +
+    #     geom_boxplot(
+    #         lwd = 1.5, 
+    #         fatten = 0.5, 
+    #         alpha = 0.5 
+    #     ) + 
+    #     geom_hline(yintercept=1, 
+    #                linetype="dashed", 
+    #                color = "black", 
+    #                size = rel(0.5),
+    #                alpha = 0.7) + #
+    #     #ylim(0, 2) +
+    #     ylab(TeX('$\\mathbf{RMSE/RMSE_{Country}}$') )+ 
+    #     xlab(TeX('Year')) + 
+    #     # scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00", "#525252", "grey")) + # 
+    #     scale_fill_manual(values = c("red", "blue", "green", "#0868ac")) + # , "#E69F00" 
+    #     theme_classic(base_size = 12) +
+    #     ylim(0.1, 1.1) + 
+    #     theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
+    #            axis.text=element_text(face="bold",color="black", size=rel(1.75)),
+    #            axis.title = element_text(face="bold", color="black", size=rel(1.75)),
+    #            legend.key.size = unit(2, "line"), # added in to increase size
+    #            legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
+    #            legend.title = element_text(face="bold", color="black", size = rel(2)),
+    #            strip.text.x = element_text(face="bold", color="black", size = rel(2)) #,
+    #            #legend.position ="none"
+    #     ) #+ ggtitle(paste0("OEC: ", mnYr, " Minimum Training Months"))
     
     setwd("~/Desktop/Research Final/Mortality/Figures/Final Figures/Final Covid Figures/Mort17")
     ggsave( paste("Mortality_OLS_Together", mnYr, ".pdf"),
-            plot = plt,
-            width = 16,
-            height = 6
-    )
+            plot   = plt,
+            width  = 5,
+            height = 3)
     
     # ridge
-    plt = df %>% tibble %>% 
-        # dplyr::filter(key %in% c("Generalist", "Merged")) %>%
-        # dplyr::filter(x %in% c(0.01, 0.5, 1.5) ) %>%
-        # dplyr::filter(cl == 3) %>%
-        # dplyr::filter(n == 300) %>%
+    plt <- df %>%
+        as_tibble() %>%
+        mutate(Year = as.numeric(as.character(Year))) %>%
+        dplyr::filter(Year >= 2010) %>%
+        mutate(Year = factor(Year)) %>%
         dplyr::filter(Regularization == "Ridge") %>%
-        ggplot(aes( y = RMSE, x = Year, fill = Method )) + # 
-        # facet_wrap( ~ Method, nrow = 1) +
-        geom_boxplot(
-            lwd = 1.5, 
-            fatten = 0.5, 
-            alpha = 0.5 
-        ) + 
-        geom_hline(yintercept=1, 
-                   linetype="dashed", 
-                   color = "black", 
-                   size = rel(0.5),
-                   alpha = 0.7) + #
-        #ylim(0, 2) +
-        ylab(TeX('$\\mathbf{RMSE/RMSE_{Country}}$') )+ 
-        xlab(TeX('Year')) + 
-        # scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00", "#525252", "grey")) + # 
-        scale_fill_manual(values = c("red", "blue", "green", "#0868ac")) + # , "#E69F00" 
-        theme_classic(base_size = 12) +
-        ylim(0.1, 1.1) + 
-        theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
-               axis.text=element_text(face="bold",color="black", size=rel(1.75)),
-               axis.title = element_text(face="bold", color="black", size=rel(1.75)),
-               legend.key.size = unit(2, "line"), # added in to increase size
-               legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
-               legend.title = element_text(face="bold", color="black", size = rel(2)),
-               strip.text.x = element_text(face="bold", color="black", size = rel(2)) #,
-               #legend.position ="none"
-        ) #+ ggtitle(paste0("OEC: ", mnYr, " Minimum Training Months"))
+        ggplot(aes(y = RMSE, x = Year, fill = Method, color = Method)) + 
+        geom_hline(yintercept = 1,
+                   linetype   = 2,
+                   color      = "darkgray") +
+        geom_boxplot(size          = 0.20,
+                     outlier.size  = 0.50) +
+        geom_boxplot(size          = 0.20,
+                     color         = "black",
+                     outlier.color = NA) +
+        labs(y        = TeX('$\\mathbf{RMSE/RMSE_{Country}}$'),
+             x        = TeX('Year'),
+             title    = paste0("OEC: ", mnYr, " Minimum Training Months"),
+             subtitle = "Regularization: Ridge") +
+        scale_fill_manual(values = c("#B81D13", "#2171b5", "#EFB700", "#008450")) +
+        scale_color_manual(values = c("#B81D13", "#2171b5", "#EFB700", "#008450")) +
+        coord_cartesian(ylim = c(0.1, 1.1)) +
+        theme_bw() +
+        theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    # df %>% tibble %>%
+    #     # dplyr::filter(key %in% c("Generalist", "Merged")) %>%
+    #     # dplyr::filter(x %in% c(0.01, 0.5, 1.5) ) %>%
+    #     # dplyr::filter(cl == 3) %>%
+    #     # dplyr::filter(n == 300) %>%
+    #     dplyr::filter(Regularization == "Ridge") %>%
+    #     ggplot(aes( y = RMSE, x = Year, fill = Method )) + #
+    #     # facet_wrap( ~ Method, nrow = 1) +
+    #     geom_boxplot(
+    #         lwd = 1.5,
+    #         fatten = 0.5,
+    #         alpha = 0.5
+    #     ) +
+    #     geom_hline(yintercept=1,
+    #                linetype="dashed",
+    #                color = "black",
+    #                size = rel(0.5),
+    #                alpha = 0.7) + #
+    #     #ylim(0, 2) +
+    #     ylab(TeX('$\\mathbf{RMSE/RMSE_{Country}}$') )+
+    #     xlab(TeX('Year')) +
+    #     # scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00", "#525252", "grey")) + #
+    #     scale_fill_manual(values = c("red", "blue", "green", "#0868ac")) + # , "#E69F00"
+    #     theme_classic(base_size = 12) +
+    #     ylim(0.1, 1.1) +
+    #     theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
+    #            axis.text=element_text(face="bold",color="black", size=rel(1.75)),
+    #            axis.title = element_text(face="bold", color="black", size=rel(1.75)),
+    #            legend.key.size = unit(2, "line"), # added in to increase size
+    #            legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
+    #            legend.title = element_text(face="bold", color="black", size = rel(2)),
+    #            strip.text.x = element_text(face="bold", color="black", size = rel(2)) #,
+    #            #legend.position ="none"
+    #     ) #+ ggtitle(paste0("OEC: ", mnYr, " Minimum Training Months"))
     
     
     setwd("~/Desktop/Research Final/Mortality/Figures/Final Figures/Final Covid Figures/Mort17")
     ggsave( paste("Mortality_Ridge_Together", mnYr, ".pdf"),
-            plot = plt,
-            width = 16,
-            height = 6
-    )
+            plot   = plt,
+            width  = 5,
+            height = 3)
 }
