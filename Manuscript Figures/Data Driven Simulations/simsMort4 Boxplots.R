@@ -3,7 +3,8 @@
 ######################################################
 # compare different K and betaVar -- no regularization 
 ######################################################
-setwd("~/Desktop/Research/simsMort4")
+# setwd("~/Desktop/Research/simsMort4")
+setwd("~/Desktop/OEC/Manuscript Figures/Data Driven Simulations/simsMort4")
 library(latex2exp)
 library(tidyverse)
 library(ggplot2)
@@ -67,45 +68,67 @@ dat$tn <- as.factor(dat$tn)
 #############
 meths <- c("Specialist", "ZeroOut")
 tune <- c("zero", "cvCF") 
-
+t = "zero"
+meths = "Specialist"
 for(t in tune){
     for(m in meths){
         
         plt1 <- dat %>% 
-            tibble %>% 
+            as_tibble() %>% 
             dplyr::filter(key == m)  %>% 
             dplyr::filter(tn == t) %>%
-            ggplot( aes( y = value, x = x, fill = K )) + 
-            geom_boxplot(
-                lwd = 1.5, 
-                fatten = 0.5, 
-                alpha = 0.5 
-            ) +
-            theme_classic(base_size = 12) +
-            theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
-                   axis.text=element_text(face="bold",color="black", size=rel(1.75)),
-                   axis.title = element_text(face="bold", color="black", size=rel(1.5)),
-                   legend.key.size = unit(2, "line"), # added in to increase size
-                   legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
-                   legend.title = element_text(face="bold", color="black", size = rel(2))
-            ) +
-            geom_hline(yintercept=1, 
-                       linetype="dashed", 
-                       color = "black", 
-                       size = rel(0.5),
-                       alpha = 0.7) + #
-            ylim(0.5, 1.5) +
-            ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Stacking}}$') )+ 
-            xlab(TeX('$\\mathbf{\\sigma^2_{\\beta}}}$')) + 
-            scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00", "#525252")) + # ,
-            scale_fill_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00","#525252"))  # ,
+            ggplot(aes(y = value, x = x, fill = K, color = K)) + 
+            geom_hline(yintercept = 1,
+                       linetype   = 2,
+                       color      = "darkgray") +
+            geom_boxplot(size         = 0.20,
+                         outlier.size = 0.50) +
+            geom_boxplot(size          = 0.20,
+                         color         = "black",
+                         outlier.color = NA) +
+            coord_cartesian(ylim = c(0.5, 1.5)) +
+            scale_fill_manual(values = RColorBrewer::brewer.pal(5, "Reds")) +
+            scale_color_manual(values = RColorBrewer::brewer.pal(5, "Reds")) +
+            labs(x = TeX('$\\mathbf{\\sigma^2_{\\beta}}}$'),
+                 y = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Stack}}$'),
+                 color = "Number of \nstudies",
+                 fill  = "Number of \nstudies") +
+            theme_bw()
+        # dat %>% 
+        #     tibble %>% 
+        #     dplyr::filter(key == m)  %>% 
+        #     dplyr::filter(tn == t) %>%
+        #     ggplot( aes( y = value, x = x, fill = K )) + 
+        #     geom_boxplot(
+        #         lwd = 1.5, 
+        #         fatten = 0.5, 
+        #         alpha = 0.5 
+        #     ) +
+        #     theme_classic(base_size = 12) +
+        #     theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
+        #            axis.text=element_text(face="bold",color="black", size=rel(1.75)),
+        #            axis.title = element_text(face="bold", color="black", size=rel(1.5)),
+        #            legend.key.size = unit(2, "line"), # added in to increase size
+        #            legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
+        #            legend.title = element_text(face="bold", color="black", size = rel(2))
+        #     ) +
+        #     geom_hline(yintercept=1, 
+        #                linetype="dashed", 
+        #                color = "black", 
+        #                size = rel(0.5),
+        #                alpha = 0.7) + #
+        #     ylim(0.5, 1.5) +
+        #     ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Stacking}}$') )+ 
+        #     xlab(TeX('$\\mathbf{\\sigma^2_{\\beta}}}$')) + 
+        #     scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00", "#525252")) + # ,
+        #     scale_fill_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00","#525252"))  # ,
         
         # save figures
         setwd("~/Desktop/Research Final/Mortality/Figures/Final Figures/Data-Driven Simulations/simsMort4 Figures")
-        ggsave(paste0("mortSims_", m, "_", tn, ".pdf"), 
-               plot = plt1,
-               width = 10, height = 8)
-        
-        
+        ggsave(paste0("mortSims_", m, "_", tn, ".pdf"),
+               plot   = plt1,
+               dpi    = 300,
+               width  = 5, 
+               height = 3)
     }
 }
