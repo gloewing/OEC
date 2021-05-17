@@ -153,15 +153,6 @@ mnYr <- 100
             df <- df[!is.na(df$RMSE),]
             df$Year <- as.factor(df$Year)
             
-            geom_hline(yintercept = 1,
-                       linetype   = 2,
-                       color      = "darkgray") +
-                geom_boxplot(size         = 0.20,
-                             outlier.size = 0.50) +
-                geom_boxplot(size          = 0.20,
-                             color         = "black",
-                             outlier.color = NA)
-            
             plt <- df %>% 
                 as_tibble() %>%
                 filter(df$Method %in% c("Specialist", "Zero Out")) %>%
@@ -645,11 +636,12 @@ for(mnYr in minYrs){
              x        = TeX('Year'),
              title    = paste0("OEC: ", mnYr, " Minimum Training Months"),
              subtitle = "Regularization: OLS") +
-        scale_fill_manual(values = c("#B81D13", "#2171b5", "#EFB700", "#008450")) +
-        scale_color_manual(values = c("#B81D13", "#2171b5", "#EFB700", "#008450")) +
+        scale_fill_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252")) +
+        scale_color_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252")) +
         coord_cartesian(ylim = c(0.1, 1.1)) +
         theme_bw() +
         theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    # "#B81D13", "#2171b5", "#EFB700", "#008450"
     
     # df %>% tibble %>% 
     #     # dplyr::filter(key %in% c("Generalist", "Merged")) %>%
@@ -712,8 +704,8 @@ for(mnYr in minYrs){
              x        = TeX('Year'),
              title    = paste0("OEC: ", mnYr, " Minimum Training Months"),
              subtitle = "Regularization: Ridge") +
-        scale_fill_manual(values = c("#B81D13", "#2171b5", "#EFB700", "#008450")) +
-        scale_color_manual(values = c("#B81D13", "#2171b5", "#EFB700", "#008450")) +
+        scale_fill_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252")) +
+        scale_color_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252")) +
         coord_cartesian(ylim = c(0.1, 1.1)) +
         theme_bw() +
         theme(axis.text.x = element_text(angle = 45, hjust = 1))
