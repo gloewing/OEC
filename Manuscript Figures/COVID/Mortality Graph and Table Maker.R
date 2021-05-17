@@ -159,22 +159,29 @@ mnYr <- 100
                 mutate(Year = as.numeric(as.character(Year))) %>%
                 dplyr::filter(Year >= 2010) %>%
                 mutate(Year = factor(Year)) %>%
-                ggplot(aes(y = RMSE, x = Year, fill = Regularization)) + 
+                ggplot(aes(y = RMSE, x = Year, fill = Regularization, color = Regularization)) + 
                 facet_wrap(~Method) +
                 geom_hline(yintercept = 1,
                            linetype   = 2,
                            color      = "darkgray") +
                 geom_boxplot(size          = 0.20,
-                             outlier.size  = 0.50,
-                             fill          = "#cb181d") +
+                             outlier.size  = 0.50) +
+                geom_boxplot(size          = 0.20,
+                             color         = "black",
+                             outlier.color = NA) +
+                scale_color_manual(values = c("#ca0020", "#0868ac")) +
+                scale_fill_manual(values = c("#ca0020", "#0868ac")) +
                 labs(y        = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Stacking}}$'),
-                     x        = TeX('Year'),
-                     title    = paste0("OEC: ", mnYr, " Minimum Training Months"),
-                     subtitle = "Regularization: OLS") +
+                     x        = TeX('Year')) +
                 coord_cartesian(ylim = c(0.4, 1.1)) +
                 theme_bw() +
-                theme(axis.text.x = element_text(angle = 45, hjust = 1))
+                theme(axis.text.x = element_text(angle = 45, hjust = 1),
+                      legend.position = "top",
+                      legend.direction = "horizontal")
+            
         
+            unique(df$Regularization)
+            
             # df %>%
             #     as_tibble() %>%
             #     filter(df$Method %in% c("Specialist", "Zero Out")) %>%
@@ -226,21 +233,25 @@ mnYr <- 100
                 mutate(Year = as.numeric(as.character(Year))) %>%
                 dplyr::filter(Year >= 2010) %>%
                 mutate(Year = factor(Year)) %>%
-                ggplot(aes(y = RMSE, x = Year, fill = Regularization)) + 
+                ggplot(aes(y = RMSE, x = Year, fill = Regularization, color = Regularization)) + 
                 facet_wrap(~Method) +
                 geom_hline(yintercept = 1,
                            linetype   = 2,
                            color      = "darkgray") +
                 geom_boxplot(size          = 0.20,
-                             outlier.size  = 0.50,
-                             fill          = "#cb181d") +
+                             outlier.size  = 0.50) +
+                geom_boxplot(size          = 0.20,
+                             color         = "black",
+                             outlier.color = NA) +
+                scale_color_manual(values = c("#ca0020", "#0868ac")) +
+                scale_fill_manual(values = c("#ca0020", "#0868ac")) +
                 labs(y        = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Stacking}}$'),
-                     x        = TeX('Year'),
-                     title    = paste0("OEC: ", mnYr, " Minimum Training Months"),
-                     subtitle = "Regularization: OLS") +
-                coord_cartesian(ylim = c(0, 2)) +
+                     x        = TeX('Year')) +
+                coord_cartesian(ylim = c(0.3, 1.3)) +
                 theme_bw() +
-                theme(axis.text.x = element_text(angle = 45, hjust = 1))
+                theme(axis.text.x = element_text(angle = 45, hjust = 1),
+                      legend.position = "top",
+                      legend.direction = "horizontal")
             # 
             # df %>% tibble %>%  filter(df$Method %in% c("Spec_bestObj/Stack", "ZeroOut_bestObj/Stack0")) %>%
             #     # dplyr::filter(key %in% c("Generalist", "Merged")) %>%
@@ -290,21 +301,27 @@ mnYr <- 100
                 mutate(Year = as.numeric(as.character(Year))) %>%
                 dplyr::filter(Year >= 2010) %>%
                 mutate(Year = factor(Year)) %>%
-                ggplot(aes(y = RMSE, x = Year, fill = Regularization)) + 
+                ggplot(aes(y = RMSE, x = Year, fill = Regularization, color = Regularization)) + 
                 facet_wrap(~Method) +
                 geom_hline(yintercept = 1,
                            linetype   = 2,
                            color      = "darkgray") +
                 geom_boxplot(size          = 0.20,
-                             outlier.size  = 0.50,
-                             fill          = "#cb181d") +
+                             outlier.size  = 0.50) +
+                geom_boxplot(size          = 0.20,
+                             outlier.size  = 0.50) +
+                geom_boxplot(size          = 0.20,
+                             color         = "black",
+                             outlier.color = NA) +
+                scale_color_manual(values = c("#ca0020", "#0868ac")) +
+                scale_fill_manual(values = c("#ca0020", "#0868ac")) +
                 labs(y        = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Stacking}}$'),
-                     x        = TeX('Year'),
-                     title    = paste0("OEC: ", mnYr, " Minimum Training Months"),
-                     subtitle = "Regularization: OLS") +
+                     x        = TeX('Year')) +
                 coord_cartesian(ylim = c(0.4, 1.1)) +
                 theme_bw() +
-                theme(axis.text.x = element_text(angle = 45, hjust = 1))
+                theme(axis.text.x = element_text(angle = 45, hjust = 1),
+                      legend.position = "top",
+                      legend.direction = "horizontal")
         
             # df %>% tibble %>% filter(df$Method %in% c("Spec/noLin", "ZeroOut/noLin")) %>%
             #     ggplot(aes( y = RMSE, x = Year, fill = Regularization )) + # 
@@ -349,21 +366,25 @@ mnYr <- 100
                 mutate(Year = as.numeric(as.character(Year))) %>%
                 dplyr::filter(Year >= 2010) %>%
                 mutate(Year = factor(Year)) %>%
-                ggplot(aes(y = RMSE, x = Year, fill = Regularization)) + 
+                ggplot(aes(y = RMSE, x = Year, fill = Regularization, color = Regularization)) + 
                 facet_wrap(~Method) +
                 geom_hline(yintercept = 1,
                            linetype   = 2,
                            color      = "darkgray") +
                 geom_boxplot(size          = 0.20,
-                             outlier.size  = 0.50,
-                             fill          = "#cb181d") +
+                             outlier.size  = 0.50) +
+                geom_boxplot(size          = 0.20,
+                             color         = "black",
+                             outlier.color = NA) +
+                scale_color_manual(values = c("#ca0020", "#0868ac")) +
+                scale_fill_manual(values = c("#ca0020", "#0868ac")) +
                 labs(y        = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Stacking}}$'),
-                     x        = TeX('Year'),
-                     title    = paste0("OEC: ", mnYr, " Minimum Training Months"),
-                     subtitle = "Regularization: OLS") +
-                coord_cartesian(ylim = c(0.4, 1.1)) +
+                     x        = TeX('Year')) +
+                coord_cartesian(ylim = c(0, 2)) +
                 theme_bw() +
-                theme(axis.text.x = element_text(angle = 45, hjust = 1))
+                theme(axis.text.x = element_text(angle = 45, hjust = 1),
+                      legend.position = "top",
+                      legend.direction = "horizontal")
             
             # df %>% tibble %>% filter(df$Method %in% c("Spec_bestObj/noLin", "ZeroOut_bestObj/noLin")) %>%
             #     ggplot(aes( y = RMSE, x = Year, fill = Regularization )) + # 
@@ -410,21 +431,25 @@ mnYr <- 100
                 mutate(Year = as.numeric(as.character(Year))) %>%
                 dplyr::filter(Year >= 2010) %>%
                 mutate(Year = factor(Year)) %>%
-                ggplot(aes(y = RMSE, x = Year, fill = Regularization)) + 
+                ggplot(aes(y = RMSE, x = Year, fill = Regularization, color = Regularization)) + 
                 facet_wrap(~Method) +
                 geom_hline(yintercept = 1,
                            linetype   = 2,
                            color      = "darkgray") +
                 geom_boxplot(size          = 0.20,
-                             outlier.size  = 0.50,
-                             fill          = "#cb181d") +
+                             outlier.size  = 0.50) +
+                geom_boxplot(size          = 0.20,
+                             color         = "black",
+                             outlier.color = NA) +
+                scale_color_manual(values = c("#ca0020", "#0868ac")) +
+                scale_fill_manual(values = c("#ca0020", "#0868ac")) +
                 labs(y        = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Stacking}}$'),
-                     x        = TeX('Year'),
-                     title    = paste0("OEC: ", mnYr, " Minimum Training Months"),
-                     subtitle = "Regularization: OLS") +
-                coord_cartesian(ylim = c(0.4, 1.1)) +
+                     x        = TeX('Year')) +
+                coord_cartesian(ylim = c(0, 2)) +
                 theme_bw() +
-                theme(axis.text.x = element_text(angle = 45, hjust = 1))
+                theme(axis.text.x = element_text(angle = 45, hjust = 1),
+                      legend.position = "top",
+                      legend.direction = "horizontal")
             
             # df %>% tibble %>% filter(df$Method %in% c("Spec_bestObj/Spec", "ZeroOut_bestObj/OEC0")) %>%
             #     ggplot(aes( y = RMSE, x = Year, fill = Regularization )) + # 
