@@ -2,7 +2,8 @@
 ######################################################
 # compare different K and betaVar -- no regularization
 ######################################################
-setwd("~/Desktop/Research/sims23")
+# setwd("~/Desktop/Research/sims23")
+setwd("~/Desktop/OEC/Manuscript Figures/General Simulations/sims23")
 library(dplyr)
 library(latex2exp)
 library(kableExtra)
@@ -130,524 +131,799 @@ dat$e <- as.factor(dat$e)
 dat$n <- as.factor(dat$n)
 
 dat %>% dplyr::group_by(key, x, b, n, cl, tn) %>% dplyr::summarize(my_mean = mean(value) ) %>% print(n = Inf)
-setwd("~/Desktop/Research Final/Mortality/Figures/Final Figures/General Simulations/sims23")
+# setwd("~/Desktop/Research Final/Mortality/Figures/Final Figures/General Simulations/sims23")
 #########################
 # Generalist / Merged
 #########################
 # clusters - cvCF
-plt_cvCF = dat %>% tibble %>% 
+plt_cvCF <- dat %>% tibble %>% 
     dplyr::filter(key %in% c("Generalist", "Merged")) %>%
     dplyr::filter(x %in% c(0.01, 0.5, 1.5) ) %>%
     dplyr::filter(cl == 3) %>%
     dplyr::filter(n == 300) %>%
     dplyr::filter(tn == "cvCF") %>%
-    ggplot(aes( y = value, x = b, fill = x )) +
-    facet_wrap( ~ key, nrow = 1) +
-    geom_boxplot(
-        lwd = 1.5, 
-        fatten = 0.5, 
-        alpha = 0.5 
-    ) + 
-    geom_hline(yintercept=1, 
-               linetype="dashed", 
-               color = "black", 
-               size = rel(0.5),
-               alpha = 0.7) + #
-    #ylim(0, 2) +
-    ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$') )+ 
-    xlab(TeX('$\\mathbf{\\sigma^2_{\\beta}}}$')) + 
-    scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) + # "#525252",
-    scale_fill_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) +
-    theme_classic(base_size = 12) +
-    ylim(0.5, 1.2) + 
-    theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
-           axis.text=element_text(face="bold",color="black", size=rel(1.75)),
-           axis.title = element_text(face="bold", color="black", size=rel(1.5)),
-           legend.key.size = unit(2, "line"), # added in to increase size
-           legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
-           legend.title = element_text(face="bold", color="black", size = rel(2)),
-           strip.text.x = element_text(face="bold", color="black", size = rel(2))
-    ) + guides(fill=guide_legend(title=TeX('$\\mathbf{\\sigma^2_{x}}$')))
+    ggplot(aes( y = value, x = b, fill = x, color = x )) +
+    facet_wrap(~key) +
+    geom_hline(yintercept = 1,
+               linetype   = 2,
+               color      = "darkgray") +
+    geom_boxplot(size         = 0.20,
+                 outlier.size = 0.50,
+                 show.legend = FALSE) +
+    geom_boxplot(size          = 0.20,
+                 color         = "black",
+                 outlier.color = NA) +
+    coord_cartesian(ylim = c(0.5, 1.2)) +
+    scale_fill_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
+    scale_color_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
+    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\beta}}}$'),
+         y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$'),
+         fill = TeX('$\\mathbf{\\sigma^2_{x}}$')) +
+    theme_bw()
+# dat %>% tibble %>% 
+#     dplyr::filter(key %in% c("Generalist", "Merged")) %>%
+#     dplyr::filter(x %in% c(0.01, 0.5, 1.5) ) %>%
+#     dplyr::filter(cl == 3) %>%
+#     dplyr::filter(n == 300) %>%
+#     dplyr::filter(tn == "cvCF") %>%
+#     ggplot(aes( y = value, x = b, fill = x )) +
+#     facet_wrap( ~ key, nrow = 1) +
+#     geom_boxplot(
+#         lwd = 1.5, 
+#         fatten = 0.5, 
+#         alpha = 0.5 
+#     ) + 
+#     geom_hline(yintercept=1, 
+#                linetype="dashed", 
+#                color = "black", 
+#                size = rel(0.5),
+#                alpha = 0.7) + #
+#     #ylim(0, 2) +
+#     ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$') )+ 
+#     xlab(TeX('$\\mathbf{\\sigma^2_{\\beta}}}$')) + 
+#     scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) + # "#525252",
+#     scale_fill_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) +
+#     theme_classic(base_size = 12) +
+#     ylim(0.5, 1.2) + 
+#     theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
+#            axis.text=element_text(face="bold",color="black", size=rel(1.75)),
+#            axis.title = element_text(face="bold", color="black", size=rel(1.5)),
+#            legend.key.size = unit(2, "line"), # added in to increase size
+#            legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
+#            legend.title = element_text(face="bold", color="black", size = rel(2)),
+#            strip.text.x = element_text(face="bold", color="black", size = rel(2))
+#     ) + guides(fill=guide_legend(title=TeX('$\\mathbf{\\sigma^2_{x}}$')))
 
 # clusters - zero
-plt_zero = dat %>% tibble %>% 
+plt_zero <- dat %>% tibble %>% 
     dplyr::filter(key %in% c("Generalist", "Merged")) %>%
     dplyr::filter(x %in% c(0.01, 0.5, 1.5) ) %>%
     dplyr::filter(cl == 3) %>%
     dplyr::filter(n == 300) %>%
     dplyr::filter(tn == "zero") %>%
-    ggplot(aes( y = value, x = b, fill = x )) +
-    facet_wrap( ~ key, nrow = 1) +
-    geom_boxplot(
-        lwd = 1.5, 
-        fatten = 0.5, 
-        alpha = 0.5 
-    ) + 
-    geom_hline(yintercept=1, 
-               linetype="dashed", 
-               color = "black", 
-               size = rel(0.5),
-               alpha = 0.7) + #
-    #ylim(0, 2) +
-    ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$') )+ 
-    xlab(TeX('$\\mathbf{\\sigma^2_{\\beta}}}$')) + 
-    scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) + # "#525252",
-    scale_fill_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) +
-    theme_classic(base_size = 12) +
-    ylim(0.5, 1.2) + 
-    theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
-           axis.text=element_text(face="bold",color="black", size=rel(1.75)),
-           axis.title = element_text(face="bold", color="black", size=rel(1.5)),
-           legend.key.size = unit(2, "line"), # added in to increase size
-           legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
-           legend.title = element_text(face="bold", color="black", size = rel(2)),
-           strip.text.x = element_text(face="bold", color="black", size = rel(2))
-    ) + guides(fill=guide_legend(title=TeX('$\\mathbf{\\sigma^2_{x}}$')))
+    ggplot(aes( y = value, x = b, fill = x, color = x )) +
+    facet_wrap(~key) +
+    geom_hline(yintercept = 1,
+               linetype   = 2,
+               color      = "darkgray") +
+    geom_boxplot(size         = 0.20,
+                 outlier.size = 0.50,
+                 show.legend = FALSE) +
+    geom_boxplot(size          = 0.20,
+                 color         = "black",
+                 outlier.color = NA) +
+    coord_cartesian(ylim = c(0.5, 1.2)) +
+    scale_fill_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
+    scale_color_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
+    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\beta}}}$'),
+         y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$'),
+         fill = TeX('$\\mathbf{\\sigma^2_{x}}$')) +
+    theme_bw()
+# dat %>% tibble %>% 
+#     dplyr::filter(key %in% c("Generalist", "Merged")) %>%
+#     dplyr::filter(x %in% c(0.01, 0.5, 1.5) ) %>%
+#     dplyr::filter(cl == 3) %>%
+#     dplyr::filter(n == 300) %>%
+#     dplyr::filter(tn == "zero") %>%
+#     ggplot(aes( y = value, x = b, fill = x )) +
+#     facet_wrap( ~ key, nrow = 1) +
+#     geom_boxplot(
+#         lwd = 1.5, 
+#         fatten = 0.5, 
+#         alpha = 0.5 
+#     ) + 
+#     geom_hline(yintercept=1, 
+#                linetype="dashed", 
+#                color = "black", 
+#                size = rel(0.5),
+#                alpha = 0.7) + #
+#     #ylim(0, 2) +
+#     ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$') )+ 
+#     xlab(TeX('$\\mathbf{\\sigma^2_{\\beta}}}$')) + 
+#     scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) + # "#525252",
+#     scale_fill_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) +
+#     theme_classic(base_size = 12) +
+#     ylim(0.5, 1.2) + 
+#     theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
+#            axis.text=element_text(face="bold",color="black", size=rel(1.75)),
+#            axis.title = element_text(face="bold", color="black", size=rel(1.5)),
+#            legend.key.size = unit(2, "line"), # added in to increase size
+#            legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
+#            legend.title = element_text(face="bold", color="black", size = rel(2)),
+#            strip.text.x = element_text(face="bold", color="black", size = rel(2))
+#     ) + guides(fill=guide_legend(title=TeX('$\\mathbf{\\sigma^2_{x}}$')))
 
 setwd("~/Desktop/Research Final/Mortality/Figures/Final Figures/General Simulations/sims23")
 ggsave( "sims23_generalist_merged_CLust_oec_NoWspecTn_cvCF.png",
-        plot = plt_cvCF,
-        width = 15,
-        height = 10 
-)
+        plot   = plt_cvCF,
+        width  = 3,
+        height = 4)
 
 ggsave( "sims23_generalist_merged_CLust_oec_NoWspecTn_zero.png",
-        plot = plt_zero,
-        width = 15,
-        height = 10 
-)
+        plot   = plt_zero,
+        width  = 3,
+        height = 4)
 
 rm(plt_cvCF, plt_zero)
 
 # clusters - plot together all standardized by the merged tested on the specialist country - cvCF
-plt_cvCF = dat %>% tibble %>% 
+plt_cvCF <- dat %>% tibble %>% 
     dplyr::filter(key %in% c("ZeroMerged", "SpecMerged", "ZeroOecMerged", "SpecOecMerged")) %>%
     dplyr::filter(cl == 3) %>%
     dplyr::filter(n == 300) %>%
     dplyr::filter(tn == "cvCF") %>%
     dplyr::filter(x == 0.01) %>%
-    ggplot(aes( y = value, x = b, fill = key )) +
-    #facet_wrap( ~ key, nrow = 1) +
-    geom_boxplot(
-        lwd = 1.5, 
-        fatten = 0.5, 
-        alpha = 0.5 
-    ) + 
-    geom_hline(yintercept=1, 
-               linetype="dashed", 
-               color = "black", 
-               size = rel(0.5),
-               alpha = 0.7) + #
-    #ylim(0, 2) +
-    ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Merged}}$') )+ 
-    xlab(TeX('$\\mathbf{\\sigma^2_{\\beta}}}$')) + 
-    scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) + # "#525252",
-    scale_fill_manual(labels=c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC"),
-                      values = c("red", "blue", "green", "#0868ac", "#E69F00") ) +
-    theme_classic(base_size = 12) +
-    ylim(0.5, 1.2) + 
-    theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
-           axis.text=element_text(face="bold",color="black", size=rel(1.75)),
-           axis.title = element_text(face="bold", color="black", size=rel(1.5)),
-           legend.key.size = unit(2, "line"), # added in to increase size
-           legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
-           legend.title = element_text(face="bold", color="black", size = rel(2)),
-           strip.text.x = element_text(face="bold", color="black", size = rel(2))
-    ) + guides(fill=guide_legend(title="Method"))
+    ggplot(aes( y = value, x = b, fill = key, color = key )) +
+    geom_hline(yintercept = 1,
+               linetype   = 2,
+               color      = "darkgray") +
+    geom_boxplot(size         = 0.20,
+                 outlier.size = 0.50,
+                 show.legend = FALSE) +
+    geom_boxplot(size          = 0.20,
+                 color         = "black",
+                 outlier.color = NA) +
+    scale_fill_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
+                      labels = c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC")) +
+    scale_color_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
+                       labels = c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC")) +
+    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\beta}}}$'),
+         y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$'),
+         fill = "Method") +
+    theme_bw()
+# dat %>% tibble %>% 
+#     dplyr::filter(key %in% c("ZeroMerged", "SpecMerged", "ZeroOecMerged", "SpecOecMerged")) %>%
+#     dplyr::filter(cl == 3) %>%
+#     dplyr::filter(n == 300) %>%
+#     dplyr::filter(tn == "cvCF") %>%
+#     dplyr::filter(x == 0.01) %>%
+#     ggplot(aes( y = value, x = b, fill = key )) +
+#     #facet_wrap( ~ key, nrow = 1) +
+#     geom_boxplot(
+#         lwd = 1.5, 
+#         fatten = 0.5, 
+#         alpha = 0.5 
+#     ) + 
+#     geom_hline(yintercept=1, 
+#                linetype="dashed", 
+#                color = "black", 
+#                size = rel(0.5),
+#                alpha = 0.7) + #
+#     #ylim(0, 2) +
+#     ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Merged}}$') )+ 
+#     xlab(TeX('$\\mathbf{\\sigma^2_{\\beta}}}$')) + 
+#     scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) + # "#525252",
+#     scale_fill_manual(labels=c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC"),
+#                       values = c("red", "blue", "green", "#0868ac", "#E69F00") ) +
+#     theme_classic(base_size = 12) +
+#     ylim(0.5, 1.2) + 
+#     theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
+#            axis.text=element_text(face="bold",color="black", size=rel(1.75)),
+#            axis.title = element_text(face="bold", color="black", size=rel(1.5)),
+#            legend.key.size = unit(2, "line"), # added in to increase size
+#            legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
+#            legend.title = element_text(face="bold", color="black", size = rel(2)),
+#            strip.text.x = element_text(face="bold", color="black", size = rel(2))
+#     ) + guides(fill=guide_legend(title="Method"))
 
 # clusters - plot together all standardized by the merged tested on the specialist country - zero
-plt_zero = dat %>% tibble %>% 
+plt_zero <- dat %>% tibble %>%
     dplyr::filter(key %in% c("ZeroMerged", "SpecMerged", "ZeroOecMerged", "SpecOecMerged")) %>%
     dplyr::filter(cl == 3) %>%
     dplyr::filter(n == 300) %>%
     dplyr::filter(tn == "zero") %>%
     dplyr::filter(x == 0.01) %>%
-    ggplot(aes( y = value, x = b, fill = key )) +
-    #facet_wrap( ~ key, nrow = 1) +
-    geom_boxplot(
-        lwd = 1.5, 
-        fatten = 0.5, 
-        alpha = 0.5 
-    ) + 
-    geom_hline(yintercept=1, 
-               linetype="dashed", 
-               color = "black", 
-               size = rel(0.5),
-               alpha = 0.7) + #
-    #ylim(0, 2) +
-    ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Merged}}$') )+ 
-    xlab(TeX('$\\mathbf{\\sigma^2_{\\beta}}}$')) + 
-    scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) + # "#525252",
-    scale_fill_manual(labels=c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC"),
-                      values = c("red", "blue", "green", "#0868ac", "#E69F00") ) +
-    theme_classic(base_size = 12) +
-    ylim(0.5, 1.2) + 
-    theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
-           axis.text=element_text(face="bold",color="black", size=rel(1.75)),
-           axis.title = element_text(face="bold", color="black", size=rel(1.5)),
-           legend.key.size = unit(2, "line"), # added in to increase size
-           legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
-           legend.title = element_text(face="bold", color="black", size = rel(2)),
-           strip.text.x = element_text(face="bold", color="black", size = rel(2))
-    ) + guides(fill=guide_legend(title="Method"))
+    ggplot(aes( y = value, x = b, fill = key, color = key )) +
+    geom_hline(yintercept = 1,
+               linetype   = 2,
+               color      = "darkgray") +
+    geom_boxplot(size         = 0.20,
+                 outlier.size = 0.50,
+                 show.legend = FALSE) +
+    geom_boxplot(size          = 0.20,
+                 color         = "black",
+                 outlier.color = NA) +
+    scale_fill_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
+                      labels = c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC")) +
+    scale_color_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
+                       labels = c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC")) +
+    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\beta}}}$'),
+         y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$'),
+         fill = "Method") +
+    theme_bw()
+# dat %>% tibble %>% 
+#     dplyr::filter(key %in% c("ZeroMerged", "SpecMerged", "ZeroOecMerged", "SpecOecMerged")) %>%
+#     dplyr::filter(cl == 3) %>%
+#     dplyr::filter(n == 300) %>%
+#     dplyr::filter(tn == "zero") %>%
+#     dplyr::filter(x == 0.01) %>%
+#     ggplot(aes( y = value, x = b, fill = key )) +
+#     #facet_wrap( ~ key, nrow = 1) +
+#     geom_boxplot(
+#         lwd = 1.5, 
+#         fatten = 0.5, 
+#         alpha = 0.5 
+#     ) + 
+#     geom_hline(yintercept=1, 
+#                linetype="dashed", 
+#                color = "black", 
+#                size = rel(0.5),
+#                alpha = 0.7) + #
+#     #ylim(0, 2) +
+#     ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Merged}}$') )+ 
+#     xlab(TeX('$\\mathbf{\\sigma^2_{\\beta}}}$')) + 
+#     scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) + # "#525252",
+#     scale_fill_manual(labels=c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC"),
+#                       values = c("red", "blue", "green", "#0868ac", "#E69F00") ) +
+#     theme_classic(base_size = 12) +
+#     ylim(0.5, 1.2) + 
+#     theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
+#            axis.text=element_text(face="bold",color="black", size=rel(1.75)),
+#            axis.title = element_text(face="bold", color="black", size=rel(1.5)),
+#            legend.key.size = unit(2, "line"), # added in to increase size
+#            legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
+#            legend.title = element_text(face="bold", color="black", size = rel(2)),
+#            strip.text.x = element_text(face="bold", color="black", size = rel(2))
+#     ) + guides(fill=guide_legend(title="Method"))
 
 setwd("~/Desktop/Research Final/Mortality/Figures/Final Figures/General Simulations/sims23")
 ggsave( "sims23_specialist_clusts_oecTogether_NoWspecTn_cvCF.png",
-        plot = plt_cvCF,
-        width = 15,
-        height = 10 
-)
+        plot   = plt_cvCF,
+        width  = 5,
+        height = 3)
 
 ggsave( "sims23_specialist_clusts_oecTogether_NoWspecTn_zero.png",
-        plot = plt_zero,
-        width = 15,
-        height = 10 
-)
+        plot   = plt_zero,
+        width  = 5,
+        height = 3)
 
 rm(plt_cvCF, plt_zero)
 
 # no clusters - cvCF
-plt1_cvCF = dat %>% tibble %>% 
+plt1_cvCF <- dat %>% tibble %>% 
     dplyr::filter(key %in% c("Generalist", "Merged")) %>%
     dplyr::filter(cl == 6) %>%
     dplyr::filter(n == 300) %>%
     dplyr::filter(tn == "cvCF") %>%
     dplyr::filter(x %in% c(0.01, 0.5, 1.5) ) %>%
-    ggplot(aes( y = value, x = b, fill = x )) +
-    facet_wrap( ~ key, nrow = 1) +
-    geom_boxplot(
-        lwd = 1.5, 
-        fatten = 0.5, 
-        alpha = 0.5 
-    ) + 
-    geom_hline(yintercept=1, 
-               linetype="dashed", 
-               color = "black", 
-               size = rel(0.5),
-               alpha = 0.7) + #
-    #ylim(0, 2) +
-    ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$') )+ 
-    xlab(TeX('$\\mathbf{\\sigma^2_{\\beta}}}$')) + 
-    scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) + # "#525252",
-    scale_fill_manual(values = c( "red", "blue", "green", "#0868ac", "#E69F00")) +
-    theme_classic(base_size = 12) +
-    ylim(0.5, 1.2) + 
-    theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
-           axis.text=element_text(face="bold",color="black", size=rel(1.75)),
-           axis.title = element_text(face="bold", color="black", size=rel(1.5)),
-           legend.key.size = unit(2, "line"), # added in to increase size
-           legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
-           legend.title = element_text(face="bold", color="black", size = rel(2)),
-           strip.text.x = element_text(face="bold", color="black", size = rel(2))
-    ) + guides(fill=guide_legend(title=TeX('$\\mathbf{\\sigma^2_{x}}$')))
+    ggplot(aes( y = value, x = b, fill = x, color = x )) +
+    facet_wrap(~key) +
+    geom_hline(yintercept = 1,
+               linetype   = 2,
+               color      = "darkgray") +
+    geom_boxplot(size         = 0.20,
+                 outlier.size = 0.50,
+                 show.legend = FALSE) +
+    geom_boxplot(size          = 0.20,
+                 color         = "black",
+                 outlier.color = NA) +
+    coord_cartesian(ylim = c(0.5, 1.2)) +
+    scale_fill_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
+    scale_color_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
+    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\beta}}}$'),
+         y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$'),
+         fill = TeX('$\\mathbf{\\sigma^2_{x}}$')) +
+    theme_bw()
+# dat %>% tibble %>% 
+#     dplyr::filter(key %in% c("Generalist", "Merged")) %>%
+#     dplyr::filter(cl == 6) %>%
+#     dplyr::filter(n == 300) %>%
+#     dplyr::filter(tn == "cvCF") %>%
+#     dplyr::filter(x %in% c(0.01, 0.5, 1.5) ) %>%
+#     ggplot(aes( y = value, x = b, fill = x )) +
+#     facet_wrap( ~ key, nrow = 1) +
+#     geom_boxplot(
+#         lwd = 1.5, 
+#         fatten = 0.5, 
+#         alpha = 0.5 
+#     ) + 
+#     geom_hline(yintercept=1, 
+#                linetype="dashed", 
+#                color = "black", 
+#                size = rel(0.5),
+#                alpha = 0.7) + #
+#     #ylim(0, 2) +
+#     ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$') )+ 
+#     xlab(TeX('$\\mathbf{\\sigma^2_{\\beta}}}$')) + 
+#     scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) + # "#525252",
+#     scale_fill_manual(values = c( "red", "blue", "green", "#0868ac", "#E69F00")) +
+#     theme_classic(base_size = 12) +
+#     ylim(0.5, 1.2) + 
+#     theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
+#            axis.text=element_text(face="bold",color="black", size=rel(1.75)),
+#            axis.title = element_text(face="bold", color="black", size=rel(1.5)),
+#            legend.key.size = unit(2, "line"), # added in to increase size
+#            legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
+#            legend.title = element_text(face="bold", color="black", size = rel(2)),
+#            strip.text.x = element_text(face="bold", color="black", size = rel(2))
+#     ) + guides(fill=guide_legend(title=TeX('$\\mathbf{\\sigma^2_{x}}$')))
 
 # no clusters - zero
-plt1_zero = dat %>% tibble %>% 
+plt1_zero <- dat %>% tibble %>% 
     dplyr::filter(key %in% c("Generalist", "Merged")) %>%
     dplyr::filter(cl == 6) %>%
     dplyr::filter(n == 300) %>%
     dplyr::filter(tn == "zero") %>%
     dplyr::filter(x %in% c(0.01, 0.5, 1.5) ) %>%
-    ggplot(aes( y = value, x = b, fill = x )) +
-    facet_wrap( ~ key, nrow = 1) +
-    geom_boxplot(
-        lwd = 1.5, 
-        fatten = 0.5, 
-        alpha = 0.5 
-    ) + 
-    geom_hline(yintercept=1, 
-               linetype="dashed", 
-               color = "black", 
-               size = rel(0.5),
-               alpha = 0.7) + #
-    #ylim(0, 2) +
-    ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$') )+ 
-    xlab(TeX('$\\mathbf{\\sigma^2_{\\beta}}}$')) + 
-    scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) + # "#525252",
-    scale_fill_manual(values = c( "red", "blue", "green", "#0868ac", "#E69F00")) +
-    theme_classic(base_size = 12) +
-    ylim(0.5, 1.2) + 
-    theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
-           axis.text=element_text(face="bold",color="black", size=rel(1.75)),
-           axis.title = element_text(face="bold", color="black", size=rel(1.5)),
-           legend.key.size = unit(2, "line"), # added in to increase size
-           legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
-           legend.title = element_text(face="bold", color="black", size = rel(2)),
-           strip.text.x = element_text(face="bold", color="black", size = rel(2))
-    ) + guides(fill=guide_legend(title=TeX('$\\mathbf{\\sigma^2_{x}}$')))
+    ggplot(aes( y = value, x = b, fill = x, color = x )) +
+    facet_wrap(~key) +
+    geom_hline(yintercept = 1,
+               linetype   = 2,
+               color      = "darkgray") +
+    geom_boxplot(size         = 0.20,
+                 outlier.size = 0.50,
+                 show.legend = FALSE) +
+    geom_boxplot(size          = 0.20,
+                 color         = "black",
+                 outlier.color = NA) +
+    coord_cartesian(ylim = c(0.5, 1.2)) +
+    scale_fill_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
+    scale_color_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
+    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\beta}}}$'),
+         y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$'),
+         fill = TeX('$\\mathbf{\\sigma^2_{x}}$')) +
+    theme_bw()
+# dat %>% tibble %>% 
+#     dplyr::filter(key %in% c("Generalist", "Merged")) %>%
+#     dplyr::filter(cl == 6) %>%
+#     dplyr::filter(n == 300) %>%
+#     dplyr::filter(tn == "zero") %>%
+#     dplyr::filter(x %in% c(0.01, 0.5, 1.5) ) %>%
+#     ggplot(aes( y = value, x = b, fill = x )) +
+#     facet_wrap( ~ key, nrow = 1) +
+#     geom_boxplot(
+#         lwd = 1.5, 
+#         fatten = 0.5, 
+#         alpha = 0.5 
+#     ) + 
+#     geom_hline(yintercept=1, 
+#                linetype="dashed", 
+#                color = "black", 
+#                size = rel(0.5),
+#                alpha = 0.7) + #
+#     #ylim(0, 2) +
+#     ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$') )+ 
+#     xlab(TeX('$\\mathbf{\\sigma^2_{\\beta}}}$')) + 
+#     scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) + # "#525252",
+#     scale_fill_manual(values = c( "red", "blue", "green", "#0868ac", "#E69F00")) +
+#     theme_classic(base_size = 12) +
+#     ylim(0.5, 1.2) + 
+#     theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
+#            axis.text=element_text(face="bold",color="black", size=rel(1.75)),
+#            axis.title = element_text(face="bold", color="black", size=rel(1.5)),
+#            legend.key.size = unit(2, "line"), # added in to increase size
+#            legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
+#            legend.title = element_text(face="bold", color="black", size = rel(2)),
+#            strip.text.x = element_text(face="bold", color="black", size = rel(2))
+#     ) + guides(fill=guide_legend(title=TeX('$\\mathbf{\\sigma^2_{x}}$')))
 
 setwd("~/Desktop/Research Final/Mortality/Figures/Final Figures/General Simulations/sims23")
 ggsave( "sims23_generalist_merged_noCLust_oec_NoWspecTn_cvCF.png",
-        plot = plt1_cvCF,
-        width = 15,
-        height = 10 
-)
-ggsave( "sims23_generalist_merged_noCLust_oec_NoWspecTn_zero.png",
-        plot = plt1_zero,
-        width = 15,
-        height = 10 
-)
+        plot   = plt1_cvCF,
+        width  = 8,
+        height = 3)
 
+ggsave( "sims23_generalist_merged_noCLust_oec_NoWspecTn_zero.png",
+        plot   = plt1_zero,
+        width  = 8,
+        height = 3)
 rm(plt1_cvCF, plt1_zero)
 
 # clusters - plot together all standardized by the merged tested on the specialist country - cvCF
-plt_cvCF = dat %>% tibble %>% 
+plt_cvCF <- dat %>% tibble %>% 
     dplyr::filter(key %in% c("ZeroMerged", "SpecMerged", "ZeroOecMerged", "SpecOecMerged")) %>%
     dplyr::filter(cl == 6) %>%
     dplyr::filter(n == 300) %>%
     dplyr::filter(tn == "cvCF") %>%
     dplyr::filter(x == 0.01) %>%
-    ggplot(aes( y = value, x = b, fill = key )) +
-    #facet_wrap( ~ key, nrow = 1) +
-    geom_boxplot(
-        lwd = 1.5, 
-        fatten = 0.5, 
-        alpha = 0.5 
-    ) + 
-    geom_hline(yintercept=1, 
-               linetype="dashed", 
-               color = "black", 
-               size = rel(0.5),
-               alpha = 0.7) + #
-    #ylim(0, 2) +
-    ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Merged}}$') )+ 
-    xlab(TeX('$\\mathbf{\\sigma^2_{\\beta}}}$')) + 
-    scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) + # "#525252",
-    scale_fill_manual(labels=c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC"),
-                      values = c("red", "blue", "green", "#0868ac", "#E69F00") ) +
-    theme_classic(base_size = 12) +
-    ylim(0.5, 1.2) + 
-    theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
-           axis.text=element_text(face="bold",color="black", size=rel(1.75)),
-           axis.title = element_text(face="bold", color="black", size=rel(1.5)),
-           legend.key.size = unit(2, "line"), # added in to increase size
-           legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
-           legend.title = element_text(face="bold", color="black", size = rel(2)),
-           strip.text.x = element_text(face="bold", color="black", size = rel(2))
-    ) + guides(fill=guide_legend(title="Method"))
+    ggplot(aes( y = value, x = b, fill = key, color = key )) +
+    geom_hline(yintercept = 1,
+               linetype   = 2,
+               color      = "darkgray") +
+    geom_boxplot(size         = 0.20,
+                 outlier.size = 0.50,
+                 show.legend = FALSE) +
+    geom_boxplot(size          = 0.20,
+                 color         = "black",
+                 outlier.color = NA) +
+    scale_fill_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
+                      labels = c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC")) +
+    scale_color_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
+                       labels = c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC")) +
+    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\beta}}}$'),
+         y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$'),
+         fill = "Method") +
+    theme_bw()
+# dat %>% tibble %>% 
+#     dplyr::filter(key %in% c("ZeroMerged", "SpecMerged", "ZeroOecMerged", "SpecOecMerged")) %>%
+#     dplyr::filter(cl == 6) %>%
+#     dplyr::filter(n == 300) %>%
+#     dplyr::filter(tn == "cvCF") %>%
+#     dplyr::filter(x == 0.01) %>%
+#     ggplot(aes( y = value, x = b, fill = key )) +
+#     #facet_wrap( ~ key, nrow = 1) +
+#     geom_boxplot(
+#         lwd = 1.5, 
+#         fatten = 0.5, 
+#         alpha = 0.5 
+#     ) + 
+#     geom_hline(yintercept=1, 
+#                linetype="dashed", 
+#                color = "black", 
+#                size = rel(0.5),
+#                alpha = 0.7) + #
+#     #ylim(0, 2) +
+#     ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Merged}}$') )+ 
+#     xlab(TeX('$\\mathbf{\\sigma^2_{\\beta}}}$')) + 
+#     scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) + # "#525252",
+#     scale_fill_manual(labels=c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC"),
+#                       values = c("red", "blue", "green", "#0868ac", "#E69F00") ) +
+#     theme_classic(base_size = 12) +
+#     ylim(0.5, 1.2) + 
+#     theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
+#            axis.text=element_text(face="bold",color="black", size=rel(1.75)),
+#            axis.title = element_text(face="bold", color="black", size=rel(1.5)),
+#            legend.key.size = unit(2, "line"), # added in to increase size
+#            legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
+#            legend.title = element_text(face="bold", color="black", size = rel(2)),
+#            strip.text.x = element_text(face="bold", color="black", size = rel(2))
+#     ) + guides(fill=guide_legend(title="Method"))
 
 # clusters - plot together all standardized by the merged tested on the specialist country - zero
-plt_zero = dat %>% tibble %>% 
+plt_zero <- dat %>% tibble %>% 
     dplyr::filter(key %in% c("ZeroMerged", "SpecMerged", "ZeroOecMerged", "SpecOecMerged")) %>%
     dplyr::filter(cl == 6) %>%
     dplyr::filter(n == 300) %>%
     dplyr::filter(tn == "zero") %>%
     dplyr::filter(x == 0.01) %>%
-    ggplot(aes( y = value, x = b, fill = key )) +
-    #facet_wrap( ~ key, nrow = 1) +
-    geom_boxplot(
-        lwd = 1.5, 
-        fatten = 0.5, 
-        alpha = 0.5 
-    ) + 
-    geom_hline(yintercept=1, 
-               linetype="dashed", 
-               color = "black", 
-               size = rel(0.5),
-               alpha = 0.7) + #
-    #ylim(0, 2) +
-    ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Merged}}$') )+ 
-    xlab(TeX('$\\mathbf{\\sigma^2_{\\beta}}}$')) + 
-    scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) + # "#525252",
-    scale_fill_manual(labels=c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC"),
-                      values = c("red", "blue", "green", "#0868ac", "#E69F00") ) +
-    theme_classic(base_size = 12) +
-    ylim(0.5, 1.2) + 
-    theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
-           axis.text=element_text(face="bold",color="black", size=rel(1.75)),
-           axis.title = element_text(face="bold", color="black", size=rel(1.5)),
-           legend.key.size = unit(2, "line"), # added in to increase size
-           legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
-           legend.title = element_text(face="bold", color="black", size = rel(2)),
-           strip.text.x = element_text(face="bold", color="black", size = rel(2))
-    ) + guides(fill=guide_legend(title="Method"))
+    ggplot(aes( y = value, x = b, fill = key, color = key )) +
+    geom_hline(yintercept = 1,
+               linetype   = 2,
+               color      = "darkgray") +
+    geom_boxplot(size         = 0.20,
+                 outlier.size = 0.50,
+                 show.legend = FALSE) +
+    geom_boxplot(size          = 0.20,
+                 color         = "black",
+                 outlier.color = NA) +
+    scale_fill_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
+                      labels = c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC")) +
+    scale_color_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
+                       labels = c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC")) +
+    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\beta}}}$'),
+         y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$'),
+         fill = "Method") +
+    theme_bw()
+# dat %>% tibble %>% 
+#     dplyr::filter(key %in% c("ZeroMerged", "SpecMerged", "ZeroOecMerged", "SpecOecMerged")) %>%
+#     dplyr::filter(cl == 6) %>%
+#     dplyr::filter(n == 300) %>%
+#     dplyr::filter(tn == "zero") %>%
+#     dplyr::filter(x == 0.01) %>%
+#     ggplot(aes( y = value, x = b, fill = key )) +
+#     #facet_wrap( ~ key, nrow = 1) +
+#     geom_boxplot(
+#         lwd = 1.5, 
+#         fatten = 0.5, 
+#         alpha = 0.5 
+#     ) + 
+#     geom_hline(yintercept=1, 
+#                linetype="dashed", 
+#                color = "black", 
+#                size = rel(0.5),
+#                alpha = 0.7) + #
+#     #ylim(0, 2) +
+#     ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Merged}}$') )+ 
+#     xlab(TeX('$\\mathbf{\\sigma^2_{\\beta}}}$')) + 
+#     scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) + # "#525252",
+#     scale_fill_manual(labels=c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC"),
+#                       values = c("red", "blue", "green", "#0868ac", "#E69F00") ) +
+#     theme_classic(base_size = 12) +
+#     ylim(0.5, 1.2) + 
+#     theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
+#            axis.text=element_text(face="bold",color="black", size=rel(1.75)),
+#            axis.title = element_text(face="bold", color="black", size=rel(1.5)),
+#            legend.key.size = unit(2, "line"), # added in to increase size
+#            legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
+#            legend.title = element_text(face="bold", color="black", size = rel(2)),
+#            strip.text.x = element_text(face="bold", color="black", size = rel(2))
+#     ) + guides(fill=guide_legend(title="Method"))
 
 setwd("~/Desktop/Research Final/Mortality/Figures/Final Figures/General Simulations/sims23")
 ggsave( "sims23_specialist_Noclusts_oecTogether_NoWspecTn_cvCF.png",
-        plot = plt_cvCF,
-        width = 15,
-        height = 10 
-)
+        plot   = plt_cvCF,
+        width  = 5,
+        height = 3)
 
 ggsave( "sims23_specialist_Noclusts_oecTogether_NoWspecTn_zero.png",
-        plot = plt_zero,
-        width = 15,
-        height = 10 
-)
-
+        plot   = plt_zero,
+        width  = 5,
+        height = 3)
 rm(plt_cvCF, plt_zero)
 
 # cvCF clusters
-plt2_cvCF = dat %>% tibble %>% 
+plt2_cvCF <- dat %>% tibble %>% 
     #dplyr::filter(n == 6) %>%
     dplyr::filter(key %in% c("Specialist", "ZeroOut")) %>%
     dplyr::filter(cl == 3) %>%
     dplyr::filter(n == 300) %>%
     dplyr::filter(tn == "cvCF") %>%
     dplyr::filter(x %in% c(0.01, 0.5, 1.5) ) %>%
-    ggplot(aes( y = value, x = b, fill = x )) +
+    ggplot(aes( y = value, x = b, fill = x, color = x )) +
     facet_wrap( ~ key, nrow = 1) +
-    geom_boxplot(
-        lwd = 1.5, 
-        fatten = 0.5, 
-        alpha = 0.5 
-    ) + 
-    geom_hline(yintercept=1, 
-               linetype="dashed", 
-               color = "black", 
-               size = rel(0.5),
-               alpha = 0.7) + #
-    #ylim(0, 2) +
-    ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$') )+ 
-    xlab(TeX('$\\mathbf{\\sigma^2_{\\beta}}}$')) + 
-    scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) + # "#525252",
-    scale_fill_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) +
-    theme_classic(base_size = 12) +
-    ylim(0.5, 1.2) + 
-    theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
-           axis.text=element_text(face="bold",color="black", size=rel(1.75)),
-           axis.title = element_text(face="bold", color="black", size=rel(1.5)),
-           legend.key.size = unit(2, "line"), # added in to increase size
-           legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
-           legend.title = element_text(face="bold", color="black", size = rel(2)),
-           strip.text.x = element_text(face="bold", color="black", size = rel(2))
-    ) + guides(fill=guide_legend(title=TeX('$\\mathbf{\\sigma^2_{x}}$')))
+    geom_hline(yintercept = 1,
+               linetype   = 2,
+               color      = "darkgray") +
+    geom_boxplot(size         = 0.20,
+                 outlier.size = 0.50,
+                 show.legend = FALSE) +
+    geom_boxplot(size          = 0.20,
+                 color         = "black",
+                 outlier.color = NA) +
+    coord_cartesian(ylim = c(0.50, 1.20)) +
+    scale_fill_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
+    scale_color_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
+    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\beta}}}$'),
+         y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$'),
+         fill = TeX('$\\mathbf{\\sigma^2_{x}}$')) +
+    theme_bw()
+# dat %>% tibble %>% 
+#     #dplyr::filter(n == 6) %>%
+#     dplyr::filter(key %in% c("Specialist", "ZeroOut")) %>%
+#     dplyr::filter(cl == 3) %>%
+#     dplyr::filter(n == 300) %>%
+#     dplyr::filter(tn == "cvCF") %>%
+#     dplyr::filter(x %in% c(0.01, 0.5, 1.5) ) %>%
+#     ggplot(aes( y = value, x = b, fill = x )) +
+#     facet_wrap( ~ key, nrow = 1) +
+#     geom_boxplot(
+#         lwd = 1.5, 
+#         fatten = 0.5, 
+#         alpha = 0.5 
+#     ) + 
+#     geom_hline(yintercept=1, 
+#                linetype="dashed", 
+#                color = "black", 
+#                size = rel(0.5),
+#                alpha = 0.7) + #
+#     #ylim(0, 2) +
+#     ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$') )+ 
+#     xlab(TeX('$\\mathbf{\\sigma^2_{\\beta}}}$')) + 
+#     scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) + # "#525252",
+#     scale_fill_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) +
+#     theme_classic(base_size = 12) +
+#     ylim(0.5, 1.2) + 
+#     theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
+#            axis.text=element_text(face="bold",color="black", size=rel(1.75)),
+#            axis.title = element_text(face="bold", color="black", size=rel(1.5)),
+#            legend.key.size = unit(2, "line"), # added in to increase size
+#            legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
+#            legend.title = element_text(face="bold", color="black", size = rel(2)),
+#            strip.text.x = element_text(face="bold", color="black", size = rel(2))
+#     ) + guides(fill=guide_legend(title=TeX('$\\mathbf{\\sigma^2_{x}}$')))
 
 # zero clusters
-plt2_zero = dat %>% tibble %>% 
+plt2_zero <- dat %>% tibble %>% 
     #dplyr::filter(n == 6) %>%
     dplyr::filter(key %in% c("Specialist", "ZeroOut")) %>%
     dplyr::filter(cl == 3) %>%
     dplyr::filter(n == 300) %>%
     dplyr::filter(tn == "zero") %>%
     dplyr::filter(x %in% c(0.01, 0.5, 1.5) ) %>%
-    ggplot(aes( y = value, x = b, fill = x )) +
+    ggplot(aes( y = value, x = b, fill = x, color = x )) +
     facet_wrap( ~ key, nrow = 1) +
-    geom_boxplot(
-        lwd = 1.5, 
-        fatten = 0.5, 
-        alpha = 0.5 
-    ) + 
-    geom_hline(yintercept=1, 
-               linetype="dashed", 
-               color = "black", 
-               size = rel(0.5),
-               alpha = 0.7) + #
-    #ylim(0, 2) +
-    ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$') )+ 
-    xlab(TeX('$\\mathbf{\\sigma^2_{\\beta}}}$')) + 
-    scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) + # "#525252",
-    scale_fill_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) +
-    theme_classic(base_size = 12) +
-    ylim(0.5, 1.2) + 
-    theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
-           axis.text=element_text(face="bold",color="black", size=rel(1.75)),
-           axis.title = element_text(face="bold", color="black", size=rel(1.5)),
-           legend.key.size = unit(2, "line"), # added in to increase size
-           legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
-           legend.title = element_text(face="bold", color="black", size = rel(2)),
-           strip.text.x = element_text(face="bold", color="black", size = rel(2))
-    ) + guides(fill=guide_legend(title=TeX('$\\mathbf{\\sigma^2_{x}}$')))
+    geom_hline(yintercept = 1,
+               linetype   = 2,
+               color      = "darkgray") +
+    geom_boxplot(size         = 0.20,
+                 outlier.size = 0.50,
+                 show.legend = FALSE) +
+    geom_boxplot(size          = 0.20,
+                 color         = "black",
+                 outlier.color = NA) +
+    coord_cartesian(ylim = c(0.50, 1.20)) +
+    scale_fill_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
+    scale_color_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
+    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\beta}}}$'),
+         y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$'),
+         fill = TeX('$\\mathbf{\\sigma^2_{x}}$')) +
+    theme_bw()
+# dat %>% tibble %>% 
+#     #dplyr::filter(n == 6) %>%
+#     dplyr::filter(key %in% c("Specialist", "ZeroOut")) %>%
+#     dplyr::filter(cl == 3) %>%
+#     dplyr::filter(n == 300) %>%
+#     dplyr::filter(tn == "zero") %>%
+#     dplyr::filter(x %in% c(0.01, 0.5, 1.5) ) %>%
+#     ggplot(aes( y = value, x = b, fill = x )) +
+#     facet_wrap( ~ key, nrow = 1) +
+#     geom_boxplot(
+#         lwd = 1.5, 
+#         fatten = 0.5, 
+#         alpha = 0.5 
+#     ) + 
+#     geom_hline(yintercept=1, 
+#                linetype="dashed", 
+#                color = "black", 
+#                size = rel(0.5),
+#                alpha = 0.7) + #
+#     #ylim(0, 2) +
+#     ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$') )+ 
+#     xlab(TeX('$\\mathbf{\\sigma^2_{\\beta}}}$')) + 
+#     scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) + # "#525252",
+#     scale_fill_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) +
+#     theme_classic(base_size = 12) +
+#     ylim(0.5, 1.2) + 
+#     theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
+#            axis.text=element_text(face="bold",color="black", size=rel(1.75)),
+#            axis.title = element_text(face="bold", color="black", size=rel(1.5)),
+#            legend.key.size = unit(2, "line"), # added in to increase size
+#            legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
+#            legend.title = element_text(face="bold", color="black", size = rel(2)),
+#            strip.text.x = element_text(face="bold", color="black", size = rel(2))
+#     ) + guides(fill=guide_legend(title=TeX('$\\mathbf{\\sigma^2_{x}}$')))
 
 setwd("~/Desktop/Research Final/Mortality/Figures/Final Figures/General Simulations/sims23")
 ggsave( "sims23_specialist_clusts_oec_NoWspecTn_cvCF.png",
-        plot = plt2_cvCF,
-        width = 15,
-        height = 10 
-)
+        plot   = plt2_cvCF,
+        width  = 8,
+        height = 3)
 
 ggsave( "sims23_specialist_clusts_oec_NoWspecTn_zero.png",
-        plot = plt2_zero,
-        width = 15,
-        height = 10 
-)
-
+        plot   = plt2_zero,
+        width  = 8,
+        height = 3)
 rm(plt2_cvCF, plt2_zero)
 
 # clusters cvCF
-plt2_cvCF = dat %>% tibble %>% 
+plt2_cvCF <- dat %>% tibble %>% 
     #dplyr::filter(n == 6) %>%
     dplyr::filter(key %in% c("Specialist", "ZeroOut")) %>%
     dplyr::filter(cl == 6) %>%
     dplyr::filter(n == 300) %>%
     dplyr::filter(tn == "cvCF") %>%
-    ggplot(aes( y = value, x = b, fill = x )) +
+    ggplot(aes( y = value, x = b, fill = x, color = x )) +
     facet_wrap( ~ key, nrow = 1) +
-    geom_boxplot(
-        lwd = 1.5, 
-        fatten = 0.5, 
-        alpha = 0.5 
-    ) + 
-    geom_hline(yintercept=1, 
-               linetype="dashed", 
-               color = "black", 
-               size = rel(0.5),
-               alpha = 0.7) + #
-    #ylim(0, 2) +
-    ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$') )+ 
-    xlab(TeX('$\\mathbf{\\sigma^2_{\\beta}}}$')) + 
-    scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) + # "#525252",
-    scale_fill_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) +
-    theme_classic(base_size = 12) +
-    ylim(0.5, 1.2) + 
-    theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
-           axis.text=element_text(face="bold",color="black", size=rel(1.75)),
-           axis.title = element_text(face="bold", color="black", size=rel(1.5)),
-           legend.key.size = unit(2, "line"), # added in to increase size
-           legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
-           legend.title = element_text(face="bold", color="black", size = rel(2)),
-           strip.text.x = element_text(face="bold", color="black", size = rel(2))
-    ) + guides(fill=guide_legend(title=TeX('$\\mathbf{\\sigma^2_{x}}$')))
+    geom_hline(yintercept = 1,
+               linetype   = 2,
+               color      = "darkgray") +
+    geom_boxplot(size         = 0.20,
+                 outlier.size = 0.50,
+                 show.legend = FALSE) +
+    geom_boxplot(size          = 0.20,
+                 color         = "black",
+                 outlier.color = NA) +
+    coord_cartesian(ylim = c(0.50, 1.20)) +
+    scale_fill_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
+    scale_color_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
+    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\beta}}}$'),
+         y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$'),
+         fill = TeX('$\\mathbf{\\sigma^2_{x}}$')) +
+    theme_bw()
+# dat %>% tibble %>% 
+#     #dplyr::filter(n == 6) %>%
+#     dplyr::filter(key %in% c("Specialist", "ZeroOut")) %>%
+#     dplyr::filter(cl == 6) %>%
+#     dplyr::filter(n == 300) %>%
+#     dplyr::filter(tn == "cvCF") %>%
+#     ggplot(aes( y = value, x = b, fill = x )) +
+#     facet_wrap( ~ key, nrow = 1) +
+#     geom_boxplot(
+#         lwd = 1.5, 
+#         fatten = 0.5, 
+#         alpha = 0.5 
+#     ) + 
+#     geom_hline(yintercept=1, 
+#                linetype="dashed", 
+#                color = "black", 
+#                size = rel(0.5),
+#                alpha = 0.7) + #
+#     #ylim(0, 2) +
+#     ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$') )+ 
+#     xlab(TeX('$\\mathbf{\\sigma^2_{\\beta}}}$')) + 
+#     scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) + # "#525252",
+#     scale_fill_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) +
+#     theme_classic(base_size = 12) +
+#     ylim(0.5, 1.2) + 
+#     theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
+#            axis.text=element_text(face="bold",color="black", size=rel(1.75)),
+#            axis.title = element_text(face="bold", color="black", size=rel(1.5)),
+#            legend.key.size = unit(2, "line"), # added in to increase size
+#            legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
+#            legend.title = element_text(face="bold", color="black", size = rel(2)),
+#            strip.text.x = element_text(face="bold", color="black", size = rel(2))
+#     ) + guides(fill=guide_legend(title=TeX('$\\mathbf{\\sigma^2_{x}}$')))
 
 # clusters zero
-plt2_zero = dat %>% tibble %>% 
+plt2_zero <- dat %>% tibble %>% 
     #dplyr::filter(n == 6) %>%
     dplyr::filter(key %in% c("Specialist", "ZeroOut")) %>%
     dplyr::filter(cl == 6) %>%
     dplyr::filter(n == 300) %>%
     dplyr::filter(tn == "zero") %>%
-    ggplot(aes( y = value, x = b, fill = x )) +
+    ggplot(aes( y = value, x = b, fill = x, color = x )) +
     facet_wrap( ~ key, nrow = 1) +
-    geom_boxplot(
-        lwd = 1.5, 
-        fatten = 0.5, 
-        alpha = 0.5 
-    ) + 
-    geom_hline(yintercept=1, 
-               linetype="dashed", 
-               color = "black", 
-               size = rel(0.5),
-               alpha = 0.7) + #
-    #ylim(0, 2) +
-    ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$') )+ 
-    xlab(TeX('$\\mathbf{\\sigma^2_{\\beta}}}$')) + 
-    scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) + # "#525252",
-    scale_fill_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) +
-    theme_classic(base_size = 12) +
-    ylim(0.5, 1.2) + 
-    theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
-           axis.text=element_text(face="bold",color="black", size=rel(1.75)),
-           axis.title = element_text(face="bold", color="black", size=rel(1.5)),
-           legend.key.size = unit(2, "line"), # added in to increase size
-           legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
-           legend.title = element_text(face="bold", color="black", size = rel(2)),
-           strip.text.x = element_text(face="bold", color="black", size = rel(2))
-    ) + guides(fill=guide_legend(title=TeX('$\\mathbf{\\sigma^2_{x}}$')))
+    geom_hline(yintercept = 1,
+               linetype   = 2,
+               color      = "darkgray") +
+    geom_boxplot(size         = 0.20,
+                 outlier.size = 0.50,
+                 show.legend = FALSE) +
+    geom_boxplot(size          = 0.20,
+                 color         = "black",
+                 outlier.color = NA) +
+    coord_cartesian(ylim = c(0.50, 1.20)) +
+    scale_fill_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
+    scale_color_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
+    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\beta}}}$'),
+         y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$'),
+         fill = TeX('$\\mathbf{\\sigma^2_{x}}$')) +
+    theme_bw()
+# dat %>% tibble %>% 
+#     #dplyr::filter(n == 6) %>%
+#     dplyr::filter(key %in% c("Specialist", "ZeroOut")) %>%
+#     dplyr::filter(cl == 6) %>%
+#     dplyr::filter(n == 300) %>%
+#     dplyr::filter(tn == "zero") %>%
+#     ggplot(aes( y = value, x = b, fill = x )) +
+#     facet_wrap( ~ key, nrow = 1) +
+#     geom_boxplot(
+#         lwd = 1.5, 
+#         fatten = 0.5, 
+#         alpha = 0.5 
+#     ) + 
+#     geom_hline(yintercept=1, 
+#                linetype="dashed", 
+#                color = "black", 
+#                size = rel(0.5),
+#                alpha = 0.7) + #
+#     #ylim(0, 2) +
+#     ylab(TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$') )+ 
+#     xlab(TeX('$\\mathbf{\\sigma^2_{\\beta}}}$')) + 
+#     scale_color_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) + # "#525252",
+#     scale_fill_manual(values = c("red", "blue", "green", "#0868ac", "#E69F00")) +
+#     theme_classic(base_size = 12) +
+#     ylim(0.5, 1.2) + 
+#     theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2), face="bold"),
+#            axis.text=element_text(face="bold",color="black", size=rel(1.75)),
+#            axis.title = element_text(face="bold", color="black", size=rel(1.5)),
+#            legend.key.size = unit(2, "line"), # added in to increase size
+#            legend.text = element_text(face="bold", color="black", size = rel(1.75)), # 3 GCL
+#            legend.title = element_text(face="bold", color="black", size = rel(2)),
+#            strip.text.x = element_text(face="bold", color="black", size = rel(2))
+#     ) + guides(fill=guide_legend(title=TeX('$\\mathbf{\\sigma^2_{x}}$')))
 
 
 setwd("~/Desktop/Research Final/Mortality/Figures/Final Figures/General Simulations/sims23")
 ggsave( "sims23_specialist_Noclusts_oec_NoWspecTn_cvCF.png",
-        plot = plt2_cvCF,
-        width = 15,
-        height = 10 
-)
+        plot   = plt2_cvCF,
+        width  = 8,
+        height = 3)
 
 ggsave( "sims23_specialist_Noclusts_oec_NoWspecTn_zero.png",
-        plot = plt2_zero,
-        width = 15,
-        height = 10 
-)
-
+        plot   = plt2_zero,
+        width  = 8,
+        height = 3)
 rm(plt2_cvCF, plt2_zero)
 
 ###############################################################################################
