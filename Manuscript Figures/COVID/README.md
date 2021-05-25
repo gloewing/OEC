@@ -7,3 +7,5 @@
 The remainder of the files are the drafts of the figures made by "Mortality Graph and Table Maker.R" 
 
 Code to run (on a cluster) the COVID application are also included. Necessary functions are in the "Functions" folder in the main repository.
+
+Figures (.pdf) are in the paper Figures folder.
