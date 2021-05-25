@@ -200,7 +200,7 @@ plt <- df %>%
     scale_fill_manual(values = c("#ca0020", "#0868ac")) +
     labs(y        = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{SSM}}$'),
          x        = TeX('$\\mathbf{Year}$')) +
-    coord_cartesian(ylim = c(0.4, 1.1)) +
+    coord_cartesian(ylim = c(0.75, 1.45)) +
     theme_bw() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1),
           legend.position = "top",
