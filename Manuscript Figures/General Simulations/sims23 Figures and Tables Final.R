@@ -19,7 +19,7 @@ n <- 300
 ls_beta <- vector(length = length(bVar), "list")
 
 # save average results for table
-tableMat <- matrix( nc = 10, nr = length(bVar) * length(xVar) * length(clusts) * length(nVec) * length(tune))
+tableMat <- matrix( nc = 10, nr = length(bVar) * length(xVar) * length(clusts) * length(tune))
 tableMat2 <- matrix( nc = 11, nr = nrow(tableMat))
 colnames(tableMat) <- c("Tune", "n", "Clusters", "XVar", "BVar", 
                         "Generalist OEC", "Merged", 
@@ -113,7 +113,6 @@ dat$b <- as.factor(dat$b)
 dat$e <- as.factor(dat$e)
 dat$n <- as.factor(dat$n)
 
-dat %>% dplyr::group_by(key, x, b, n, cl, tn) %>% dplyr::summarize(my_mean = mean(value) ) %>% print(n = Inf)
 # setwd("~/Desktop/Research Final/Mortality/Figures/Final Figures/General Simulations/sims23")
 #########################
 # Generalist / Merged
@@ -203,9 +202,11 @@ plt_cvCF <- dat %>% tibble %>%
                  color         = "black",
                  outlier.color = NA) +
     scale_fill_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
-                      labels = c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC")) +
+                      labels = c( expression(bold(Specialist)), expression(bold(OEC[Spec])), expression(bold("Zero Out")),  expression(bold(OEC[Zero])) )
+    ) +
     scale_color_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
-                       labels = c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC")) +
+                       labels = c( expression(bold(Specialist)), expression(bold(OEC[Spec])), expression(bold("Zero Out")),  expression(bold(OEC[Zero])) )
+    ) +
     labs(x    = TeX('$\\mathbf{\\sigma^2_{\\beta}}}$'),
          y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$'),
          fill = "Method") +
@@ -230,9 +231,11 @@ plt_zero <- dat %>% tibble %>%
                  color         = "black",
                  outlier.color = NA) +
     scale_fill_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
-                      labels = c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC")) +
+                      labels = c( expression(bold(Specialist)), expression(bold(OEC[Spec])), expression(bold("Zero Out")),  expression(bold(OEC[Zero])) )
+    ) +
     scale_color_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
-                       labels = c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC")) +
+                       labels = c( expression(bold(Specialist)), expression(bold(OEC[Spec])), expression(bold("Zero Out")),  expression(bold(OEC[Zero])) )
+    ) +
     labs(x    = TeX('$\\mathbf{\\sigma^2_{\\beta}}}$'),
          y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$'),
          fill = "Method") +
@@ -336,9 +339,11 @@ plt_cvCF <- dat %>% tibble %>%
                  color         = "black",
                  outlier.color = NA) +
     scale_fill_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
-                      labels = c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC")) +
+                      labels = c( expression(bold(Specialist)), expression(bold(OEC[Spec])), expression(bold("Zero Out")),  expression(bold(OEC[Zero])) )
+    ) +
     scale_color_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
-                       labels = c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC")) +
+                       labels = c( expression(bold(Specialist)), expression(bold(OEC[Spec])), expression(bold("Zero Out")),  expression(bold(OEC[Zero])) )
+    ) +
     labs(x    = TeX('$\\mathbf{\\sigma^2_{\\beta}}}$'),
          y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$'),
          fill = "Method") +
@@ -363,9 +368,11 @@ plt_zero <- dat %>% tibble %>%
                  color         = "black",
                  outlier.color = NA) +
     scale_fill_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
-                      labels = c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC")) +
+                      labels = c( expression(bold(Specialist)), expression(bold(OEC[Spec])), expression(bold("Zero Out")),  expression(bold(OEC[Zero])) )
+    ) +
     scale_color_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
-                       labels = c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC")) +
+                       labels = c( expression(bold(Specialist)), expression(bold(OEC[Spec])), expression(bold("Zero Out")),  expression(bold(OEC[Zero])) )
+    ) +
     labs(x    = TeX('$\\mathbf{\\sigma^2_{\\beta}}}$'),
          y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$'),
          fill = "Method") +
