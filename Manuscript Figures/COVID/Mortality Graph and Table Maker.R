@@ -172,7 +172,7 @@ ggsave( paste("Mortality_Specialist_ZeroOut_OLS_Ridge_New_", mnYr, ".pdf"),
         width  = 8,
         height = 4)
 
-# rename
+# rename labels
 supp.labs <- c("Specialist", "Zero Out")
 names(supp.labs) <- c("Spec/noLin", "ZeroOut/noLin")
 
@@ -198,7 +198,7 @@ plt <- df %>%
                  outlier.color = NA) +
     scale_color_manual(values = c("#ca0020", "#0868ac")) +
     scale_fill_manual(values = c("#ca0020", "#0868ac")) +
-    labs(y        = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Stacking}}$'),
+    labs(y        = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{SSM}}$'),
          x        = TeX('$\\mathbf{Year}$')) +
     coord_cartesian(ylim = c(0.4, 1.1)) +
     theme_bw() +
@@ -313,7 +313,7 @@ plt <- df %>%
     geom_boxplot(size          = 0.20,
                  color         = "black",
                  outlier.color = NA) +
-    labs(y        = TeX('$\\mathbf{RMSE/RMSE_{Country}}$'),
+    labs(y        = TeX('$\\mathbf{RMSE/RMSE_{SSM}}$'),
          x        = TeX('$\\mathbf{Year}$')
          ) + #,
     scale_fill_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
@@ -349,7 +349,7 @@ plt <- df %>%
         geom_boxplot(size          = 0.20,
                      color         = "black",
                      outlier.color = NA) +
-        labs(y        = TeX('$\\mathbf{RMSE/RMSE_{Country}}$'),
+        labs(y        = TeX('$\\mathbf{RMSE/RMSE_{SSM}}$'),
              x        = TeX('$\\mathbf{Year}$')
              ) + #,
         scale_fill_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
