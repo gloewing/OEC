@@ -560,7 +560,7 @@ plt <- df %>%
     names(supp.labs) <- c("Spec/noLin", "ZeroOut/noLin")
     
     
-    plt <- df %>% 
+    plt1 <- df %>% 
         as_tibble() %>% 
         filter(df$Method %in% c("Spec/noLin", "ZeroOut/noLin")) %>%
         mutate(Year = as.numeric(as.character(Year))) %>%
@@ -594,7 +594,7 @@ plt <- df %>%
     # both stacking ond country have no linear term for time
     setwd("~/Desktop/Research Final/Mortality/Figures/Final Figures/Final Covid Figures/Mort17")
     ggsave( paste("Mortality_NoLinOEC_vs_NoLinCountry.pdf"),
-            plot = plt,
+            plot = plt1,
             width  = 8,
             height = 4)
     
