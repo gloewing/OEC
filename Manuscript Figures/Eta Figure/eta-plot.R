@@ -33,10 +33,10 @@ ggplot() +
                lty = 2, 
                color = "gray") +
     geom_point(aes(week, value),
-               alpha = 0.60, 
+               alpha = 0.30, 
                data  = filter(obs, week <= 52)) +
     geom_point(aes(week, value),
-               alpha = 0.30, 
+               alpha = 0.60, 
                data  = filter(obs, week > 52)) +
     scale_y_continuous(breaks = seq(18, 28, 2)) +
     geom_line(aes(week, value, color = eta, group = eta),
@@ -51,14 +51,14 @@ ggplot() +
               color = "#525252",
               size  = 1,
               data  = cspec) +
-    geom_label(aes(80, 19, label = "Country specific model"),
+    geom_label(aes(80, 19, label = "Country-specific model"),
                fontface = "bold",
                color    = "#ca0020") +
     geom_label(aes(80, 18, label = "Stacking"),
                fontface = "bold",
                color    = "#525252") +
     theme_bw() +
-    theme(text = element_text(face = "bold"))
+    theme(text = element_text(face = "bold")) +
     guides(color = guide_colorbar(title.position = "top", 
                                   title.hjust = .5, 
                                   barwidth = unit(.5, "lines"), 
@@ -67,5 +67,5 @@ ggplot() +
 
 ##
 ggsave(filename = "eta-plot.pdf",
-       height = 4,
+       height = 4.25,
        width  = 7)
