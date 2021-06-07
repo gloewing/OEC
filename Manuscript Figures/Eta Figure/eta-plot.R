@@ -33,7 +33,10 @@ ggplot() +
              color = "gray") +
   geom_point(aes(week, value),
              alpha = 0.30, 
-             data  = obs) +
+             data  = filter(obs, week <= 52)) +
+  geom_point(aes(week, value),
+             alpha = 0.60, 
+             data  = filter(obs, week > 52)) +
   scale_y_continuous(breaks = seq(18, 28, 2)) +
   geom_line(aes(week, value, color = eta, group = eta),
             data = preds) +
