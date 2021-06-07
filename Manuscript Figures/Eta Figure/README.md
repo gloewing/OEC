@@ -1,6 +1,6 @@
 # Eta Figure
 
-CSV to make figure "etaData" R file to generate the CSV is "Eta Example Final.R"
+R file to generate the CSV is "Eta Example Final.R"  This produces a CSV "etaData" that is used to make the figure.
 
-R file to make figure from CSV: ADD NAME AFTER ROLANDO FINISHES
+The R file to make figure is "eta-plot.R" This outputs the plot "eta-plot.pdf"
 
