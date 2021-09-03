@@ -44,19 +44,19 @@ ggplot() +
     scale_color_viridis_c(name = expression(eta),
                           limits    = c(0.9, 1)) +
     geom_line(aes(week, value),
-              color = "#525252",
+              color = "#ca0020",
               size  = 1,
               data  = stack) +
     geom_line(aes(week, value),
-              color = "#ca0020",
+              color = "#525252",
               size  = 1,
               data  = cspec) +
     geom_label(aes(80, 19, label = "NDR Specialist Stacking" ),
                fontface = "bold",
-               color    = "#525252") +
+               color    = "#ca0020") +
     geom_label(aes(80, 18, label = ("Country-specific model")),
                fontface = "bold",
-               color    = "#ca0020") +
+               color    = "#525252") +
     theme_bw() +
     theme(text = element_text(face = "bold")) +
     guides(color = guide_colorbar(title.position = "top", 
