@@ -87,8 +87,8 @@ for(t in tune){
             coord_cartesian(ylim = c(0.5, 1.5)) +
             scale_fill_manual(values = RColorBrewer::brewer.pal(5, "Reds")) +
             scale_color_manual(values = RColorBrewer::brewer.pal(5, "Reds")) +
-            labs(x = TeX('$\\mathbf{\\sigma^2_{\\beta}}}$'),
-                 y = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Stack}}$'),
+            labs(x = TeX('$\\mathbf{\\sigma^2_{\\theta}}}$'),
+                 y = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{MSS}}$'),
                  color = "Studies (K)",
                  fill  = "Studies (K)") +
             theme_bw() + 
