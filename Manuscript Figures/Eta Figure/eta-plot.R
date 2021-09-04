@@ -54,7 +54,7 @@ ggplot() +
     geom_label(aes(80, 19, label = "NDR Specialist Stacking" ),
                fontface = "bold",
                color    = "#ca0020") +
-    geom_label(aes(80, 18, label = ("Country-specific model")),
+    geom_label(aes(80, 18, label = ("Country-Specific Model")),
                fontface = "bold",
                color    = "#525252") +
     theme_bw() +
