@@ -139,6 +139,10 @@ for(tn in tnVec){
 df <- df[!is.na(df$RMSE),]
 df$Year <- as.factor(df$Year)
 
+# rename labels
+supp.labs <- c("Specialist", "No Data Reuse Specialist")
+names(supp.labs) <- c("Specialist", "Zero Out")
+
 plt <- df %>% 
     as_tibble() %>%
     filter(df$Method %in% c("Specialist", "Zero Out")) %>%
@@ -146,7 +150,9 @@ plt <- df %>%
     dplyr::filter(Year >= 2010) %>%
     mutate(Year = factor(Year)) %>%
     ggplot(aes(y = RMSE, x = Year, fill = Regularization, color = Regularization)) + 
-    facet_wrap(~Method) +
+    facet_wrap(~ Method,
+               labeller = labeller( Method = supp.labs )
+    ) +
     geom_hline(yintercept = 1,
                linetype   = 2,
                color      = "darkgray") +
@@ -157,7 +163,7 @@ plt <- df %>%
                  outlier.color = NA) +
     scale_color_manual(values = c("#ca0020", "#0868ac")) +
     scale_fill_manual(values = c("#ca0020", "#0868ac")) +
-    labs(y        = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Stacking}}$'),
+    labs(y        = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{MSS}}$'),
          x        = TeX('$\\mathbf{Year}$')) +
     coord_cartesian(ylim = c(0.3, 1.3)) +
     theme_bw() +
@@ -173,7 +179,7 @@ ggsave( paste("Mortality_Specialist_ZeroOut_OLS_Ridge_New_", mnYr, ".pdf"),
         height = 4)
 
 # rename labels
-supp.labs <- c("Specialist", "Zero Out")
+supp.labs <- c("Specialist", "No Data Reuse Specialist")
 names(supp.labs) <- c("Spec/noLin", "ZeroOut/noLin")
 
 plt <- df %>% 
@@ -302,6 +308,10 @@ for(tn in tnVec){
 df <- df[!is.na(df$RMSE),]
 df$Year <- as.factor(df$Year)
 
+# rename labels
+supp.labs <- c("Specialist", "No Data Reuse Specialist")
+names(supp.labs) <- c("Spec/noLin", "ZeroOut/noLin")
+
 # ols
 plt <- df %>%
     as_tibble() %>%
@@ -322,10 +332,10 @@ plt <- df %>%
          x        = TeX('$\\mathbf{Year}$')
          ) + #,
     scale_fill_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
-                      labels = c( expression(bold(Specialist)), expression(bold(OEC[Spec])), expression(bold("Zero Out")),  expression(bold(OEC[Zero])) )
+                      labels = c(expression(bold(paste("MSS"^"S"))), expression(bold(paste("OEC"^"S"))), expression(bold(paste("MSS"^"SN"))),  expression(bold(paste("OEC"^"SN"))) )
     ) +
     scale_color_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
-                       labels = c( expression(bold(Specialist)), expression(bold(OEC[Spec])), expression(bold("Zero Out")),  expression(bold(OEC[Zero])) )
+                       labels = c(expression(bold(paste("MSS"^"S"))), expression(bold(paste("OEC"^"S"))), expression(bold(paste("MSS"^"SN"))),  expression(bold(paste("OEC"^"SN"))) )
     ) +
     coord_cartesian(ylim = c(0.1, 1.1)) +
     theme_bw() +
@@ -357,12 +367,12 @@ plt <- df %>%
         labs(y        = TeX('$\\mathbf{RMSE/RMSE_{SSM}}$'),
              x        = TeX('$\\mathbf{Year}$')
              ) + #,
-        scale_fill_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
-                          labels = c( expression(bold(Specialist)), expression(bold(OEC[Spec])), expression(bold("Zero Out")),  expression(bold(OEC[Zero])) )
-        ) +
-        scale_color_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
-                           labels = c( expression(bold(Specialist)), expression(bold(OEC[Spec])), expression(bold("Zero Out")),  expression(bold(OEC[Zero])) )
-        ) +
+    scale_fill_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
+                      labels = c(expression(bold(paste("MSS"^"S"))), expression(bold(paste("OEC"^"S"))), expression(bold(paste("MSS"^"SN"))),  expression(bold(paste("OEC"^"SN"))) )
+    ) +
+    scale_color_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
+                       labels = c(expression(bold(paste("MSS"^"S"))), expression(bold(paste("OEC"^"S"))), expression(bold(paste("MSS"^"SN"))),  expression(bold(paste("OEC"^"SN"))) )
+    ) +
         coord_cartesian(ylim = c(0.1, 1.1)) +
         theme_bw() +
         theme(axis.text.x = element_text(angle = 45, hjust = 1),
@@ -518,6 +528,8 @@ plt <- df %>%
     
 ##################################################################
 # OEC vs. stacking when both do not have linear terms
+    supp.labs <- c("Specialist", "No Data Reuse Specialist")
+    names(supp.labs) <- c("Specialist", "Zero Out")
     
     plt <- df %>% 
         as_tibble() %>%
@@ -526,7 +538,9 @@ plt <- df %>%
         dplyr::filter(Year >= 2010) %>%
         mutate(Year = factor(Year)) %>%
         ggplot(aes(y = RMSE, x = Year, fill = Regularization, color = Regularization)) + 
-        facet_wrap(~Method) +
+        facet_wrap(~ Method,
+                   labeller = labeller( Method = supp.labs )
+        ) +
         geom_hline(yintercept = 1,
                    linetype   = 2,
                    color      = "darkgray") +
@@ -537,7 +551,7 @@ plt <- df %>%
                      outlier.color = NA) +
         scale_color_manual(values = c("#ca0020", "#0868ac")) +
         scale_fill_manual(values = c("#ca0020", "#0868ac")) +
-        labs(y        = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Stacking}}$'),
+        labs(y        = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{SSM}}$'),
              x        = TeX('$\\mathbf{Year}$')) +
         coord_cartesian(ylim = c(0.7, 1.25)) +
         theme_bw() +
@@ -556,7 +570,7 @@ plt <- df %>%
     
     # OEC with no linear term and country-specific model with no linear term
     # rename
-    supp.labs <- c("Specialist", "Zero Out")
+    supp.labs <- c("Specialist", "No Data Reuse Specialist")
     names(supp.labs) <- c("Spec/noLin", "ZeroOut/noLin")
     
     
