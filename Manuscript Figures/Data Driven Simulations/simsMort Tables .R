@@ -119,7 +119,6 @@ kable( round( cbind(rmseMat1, rmseMat2), 2   ),
        format = "latex", booktabs = T) %>% kable_styling(position = "center")
 
 # monte carlo error 
-apply(seMat[,3:6], 2, max)
 apply(seMat2[,3:4], 2, max)
 
 # table vs. country-specific model - no regularization
@@ -132,9 +131,11 @@ rmseMat_reduced <- resMat %>%
   filter(K %in% c(2, 8, 30) ) %>% 
   filter(bVar %in% c(0.25, 1, 4) )
 
-kable( round( (rmseMat_reduced), 3   ),  
+kable( round( (rmseMat_reduced), 2   ),  
        format = "latex", booktabs = T) %>% kable_styling(position = "center")
 
+# monte carlo error 
+apply(seMat[,3:6], 2, max)
 
 ######################################################
 # ridge term
@@ -250,7 +251,6 @@ kable( round( cbind(rmseMat1, rmseMat2), 2   ),
        format = "latex", booktabs = T) %>% kable_styling(position = "center")
 
 # monte carlo error 
-apply(seMat[,3:6], 2, max)
 apply(seMat2[,3:4], 2, max)
 
 # table vs. country-specific model - with regularization
@@ -263,7 +263,8 @@ rmseMat_reduced <- resMat %>%
   filter(K %in% c(2, 8, 30) ) %>% 
   filter(bVar %in% c(0.25, 1, 4) )
 
-kable( round( (rmseMat_reduced), 3   ),  
+kable( round( (rmseMat_reduced), 2   ),  
        format = "latex", booktabs = T) %>% kable_styling(position = "center")
 
-
+# monte carlo error 
+apply(seMat[,3:6], 2, max)
