@@ -1,6 +1,8 @@
 # Mortality Application (COVID)
 
-"Mortality Graph and Table Maker.R" makes all the figures for Section 3 of the paper (COVID Mortality application)
+"Mortality Graph and Table Maker.R" makes all the main figures for Section 3 of the paper (COVID Mortality application).
+
+"Mortality Graph and Table Maker--24-60Months.R" makes the supplemental figure exploring the impact of different amounts of training data for the target country.
 
 "mort17" folder has all the output files. These are read automatically and processed by the R file above.
 
