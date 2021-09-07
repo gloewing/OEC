@@ -144,6 +144,9 @@ dat %>% dplyr::group_by(key, x, b, n, cl, tn) %>% dplyr::summarize(my_mean = mea
 #########################
 # Generalist / Merged
 #########################
+supp.labs <- c(expression(bold(paste("OEC"^"G", " vs. MSS"^"G"))), 
+               expression(bold(paste("OEC"^"G", " vs. ToM")))) #c("Specialist", "No Data Reuse Specialist")
+
 # clusters - cvCF
 plt_cvCF <- dat %>% tibble %>% 
     dplyr::filter(key %in% c("Generalist", "Merged")) %>%
@@ -151,8 +154,11 @@ plt_cvCF <- dat %>% tibble %>%
     dplyr::filter(cl == 3) %>%
     dplyr::filter(n == 300) %>%
     dplyr::filter(tn == "cvCF") %>%
+    mutate(key=factor(key, labels= supp.labs )) %>%
     ggplot(aes( y = value, x = b, fill = x, color = x )) +
-    facet_wrap(~key) +
+    facet_wrap(~ key,
+               labeller=label_parsed
+    ) +
     geom_hline(yintercept = 1,
                linetype   = 2,
                color      = "darkgray") +
@@ -165,8 +171,8 @@ plt_cvCF <- dat %>% tibble %>%
     coord_cartesian(ylim = c(0.5, 1.2)) +
     scale_fill_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
     scale_color_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
-    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\beta}}}$'),
-         y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$'),
+    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\delta}}}$'),
+         y    = TeX('$\\mathbf{RMSE_{OEC^G}/RMSE_{Method}}$'),
          fill = TeX('$\\mathbf{\\sigma^2_{x}}$')) +
     theme_bw() + 
     theme(text = element_text(face = "bold"))
@@ -178,8 +184,9 @@ plt_zero <- dat %>% tibble %>%
     dplyr::filter(cl == 3) %>%
     dplyr::filter(n == 300) %>%
     dplyr::filter(tn == "zero") %>%
+    mutate(key=factor(key, labels= supp.labs )) %>%
     ggplot(aes( y = value, x = b, fill = x, color = x )) +
-    facet_wrap(~key) +
+    facet_wrap(~ key,                labeller=label_parsed     ) +
     geom_hline(yintercept = 1,
                linetype   = 2,
                color      = "darkgray") +
@@ -192,7 +199,7 @@ plt_zero <- dat %>% tibble %>%
     coord_cartesian(ylim = c(0.5, 1.2)) +
     scale_fill_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
     scale_color_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
-    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\beta}}}$'),
+    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\delta}}}$'),
          y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$'),
          fill = TeX('$\\mathbf{\\sigma^2_{x}}$')) +
     theme_bw() + 
@@ -229,11 +236,13 @@ plt_cvCF <- dat %>% tibble %>%
                  color         = "black",
                  outlier.color = NA) +
     scale_fill_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
-                      labels = c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC")) +
+                      labels = c(expression(bold(paste("MSS"^"S"))), expression(bold(paste("OEC"^"S"))), expression(bold(paste("MSS"^"SN"))),  expression(bold(paste("OEC"^"SN"))) )
+    ) +
     scale_color_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
-                       labels = c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC")) +
-    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\beta}}}$'),
-         y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$'),
+                       labels = c(expression(bold(paste("MSS"^"S"))), expression(bold(paste("OEC"^"S"))), expression(bold(paste("MSS"^"SN"))),  expression(bold(paste("OEC"^"SN"))) )
+    ) +
+    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\delta}}}$'),
+         y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{ToM}}$'),
          fill = "Method") +
     theme_bw() + 
     theme(text = element_text(face = "bold"))
@@ -256,11 +265,13 @@ plt_zero <- dat %>% tibble %>%
                  color         = "black",
                  outlier.color = NA) +
     scale_fill_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
-                      labels = c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC")) +
+                      labels = c(expression(bold(paste("MSS"^"S"))), expression(bold(paste("OEC"^"S"))), expression(bold(paste("MSS"^"SN"))),  expression(bold(paste("OEC"^"SN"))) )
+    ) +
     scale_color_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
-                       labels = c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC")) +
-    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\beta}}}$'),
-         y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$'),
+                       labels = c(expression(bold(paste("MSS"^"S"))), expression(bold(paste("OEC"^"S"))), expression(bold(paste("MSS"^"SN"))),  expression(bold(paste("OEC"^"SN"))) )
+    ) +
+    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\delta}}}$'),
+         y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{ToM}}$'),
          fill = "Method") +
     theme_bw() + 
     theme(text = element_text(face = "bold"))
@@ -285,8 +296,9 @@ plt1_cvCF <- dat %>% tibble %>%
     dplyr::filter(n == 300) %>%
     dplyr::filter(tn == "cvCF") %>%
     dplyr::filter(x %in% c(0.01, 0.5, 1.5) ) %>%
+    mutate(key=factor(key, labels= supp.labs )) %>%
     ggplot(aes( y = value, x = b, fill = x, color = x )) +
-    facet_wrap(~key) +
+    facet_wrap(~ key,                labeller=label_parsed     ) +
     geom_hline(yintercept = 1,
                linetype   = 2,
                color      = "darkgray") +
@@ -299,8 +311,8 @@ plt1_cvCF <- dat %>% tibble %>%
     coord_cartesian(ylim = c(0.5, 1.2)) +
     scale_fill_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
     scale_color_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
-    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\beta}}}$'),
-         y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$'),
+    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\delta}}}$'),
+         y    = TeX('$\\mathbf{RMSE_{OEC^G}/RMSE_{Method}}$'),
          fill = TeX('$\\mathbf{\\sigma^2_{x}}$')) +
     theme_bw() + 
     theme(text = element_text(face = "bold"))
@@ -312,8 +324,9 @@ plt1_zero <- dat %>% tibble %>%
     dplyr::filter(n == 300) %>%
     dplyr::filter(tn == "zero") %>%
     dplyr::filter(x %in% c(0.01, 0.5, 1.5) ) %>%
+    mutate(key=factor(key, labels= supp.labs )) %>%
     ggplot(aes( y = value, x = b, fill = x, color = x )) +
-    facet_wrap(~key) +
+    facet_wrap(~ key,                labeller=label_parsed     ) +
     geom_hline(yintercept = 1,
                linetype   = 2,
                color      = "darkgray") +
@@ -326,8 +339,8 @@ plt1_zero <- dat %>% tibble %>%
     coord_cartesian(ylim = c(0.5, 1.2)) +
     scale_fill_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
     scale_color_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
-    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\beta}}}$'),
-         y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$'),
+    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\delta}}}$'),
+         y    = TeX('$\\mathbf{RMSE_{OEC^G}/RMSE_{Method}}$'),
          fill = TeX('$\\mathbf{\\sigma^2_{x}}$')) +
     theme_bw() + 
     theme(text = element_text(face = "bold"))
@@ -362,11 +375,13 @@ plt_cvCF <- dat %>% tibble %>%
                  color         = "black",
                  outlier.color = NA) +
     scale_fill_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
-                      labels = c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC")) +
+                      labels = c(expression(bold(paste("MSS"^"S"))), expression(bold(paste("OEC"^"S"))), expression(bold(paste("MSS"^"SN"))),  expression(bold(paste("OEC"^"SN"))) )
+    ) +
     scale_color_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
-                       labels = c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC")) +
-    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\beta}}}$'),
-         y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$'),
+                       labels = c(expression(bold(paste("MSS"^"S"))), expression(bold(paste("OEC"^"S"))), expression(bold(paste("MSS"^"SN"))),  expression(bold(paste("OEC"^"SN"))) )
+    ) +
+    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\delta}}}$'),
+         y    = TeX('$\\mathbf{RMSE_{Method}/RMSE_{ToM}}$'),
          fill = "Method") +
     theme_bw() + 
     theme(text = element_text(face = "bold"))
@@ -389,11 +404,13 @@ plt_zero <- dat %>% tibble %>%
                  color         = "black",
                  outlier.color = NA) +
     scale_fill_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
-                      labels = c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC")) +
+                      labels = c(expression(bold(paste("MSS"^"S"))), expression(bold(paste("OEC"^"S"))), expression(bold(paste("MSS"^"SN"))),  expression(bold(paste("OEC"^"SN"))) )
+    ) +
     scale_color_manual(values = c("#ca0020", "#0868ac", "#E69F00", "#525252"),
-                       labels = c("Specialist","Specialist-OEC","Zero Out", "Zero Out OEC")) +
-    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\beta}}}$'),
-         y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$'),
+                       labels = c(expression(bold(paste("MSS"^"S"))), expression(bold(paste("OEC"^"S"))), expression(bold(paste("MSS"^"SN"))),  expression(bold(paste("OEC"^"SN"))) )
+    ) +
+    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\delta}}}$'),
+         y    = TeX('$\\mathbf{RMSE_{Method}/RMSE_{ToM}}$'),
          fill = "Method") +
     theme_bw() + 
     theme(text = element_text(face = "bold"))
@@ -410,7 +427,11 @@ ggsave( "sims23_specialist_Noclusts_oecTogether_NoWspecTn_zero.pdf",
         height = 3)
 rm(plt_cvCF, plt_zero)
 
+
 # cvCF clusters
+supp.labs <- c(expression(bold(paste("OEC"^"S", " vs. MSS"^"S"))), 
+               expression(bold(paste("OEC"^"SN", " vs. MSS"^"SN")))) #c("Specialist", "No Data Reuse Specialist")
+
 plt2_cvCF <- dat %>% tibble %>% 
     #dplyr::filter(n == 6) %>%
     dplyr::filter(key %in% c("Specialist", "ZeroOut")) %>%
@@ -418,8 +439,11 @@ plt2_cvCF <- dat %>% tibble %>%
     dplyr::filter(n == 300) %>%
     dplyr::filter(tn == "cvCF") %>%
     dplyr::filter(x %in% c(0.01, 0.5, 1.5) ) %>%
+    mutate(key=factor(key, labels= supp.labs )) %>%
     ggplot(aes( y = value, x = b, fill = x, color = x )) +
-    facet_wrap( ~ key, nrow = 1) +
+    facet_wrap(~ key,
+               labeller=label_parsed
+    ) +
     geom_hline(yintercept = 1,
                linetype   = 2,
                color      = "darkgray") +
@@ -432,8 +456,8 @@ plt2_cvCF <- dat %>% tibble %>%
     coord_cartesian(ylim = c(0.50, 1.20)) +
     scale_fill_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
     scale_color_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
-    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\beta}}}$'),
-         y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$'),
+    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\delta}}}$'),
+         y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{MSS}}$'),
          fill = TeX('$\\mathbf{\\sigma^2_{x}}$')) +
     theme_bw() + 
     theme(text = element_text(face = "bold"))
@@ -446,8 +470,11 @@ plt2_zero <- dat %>% tibble %>%
     dplyr::filter(n == 300) %>%
     dplyr::filter(tn == "zero") %>%
     dplyr::filter(x %in% c(0.01, 0.5, 1.5) ) %>%
+    mutate(key=factor(key, labels= supp.labs )) %>%
     ggplot(aes( y = value, x = b, fill = x, color = x )) +
-    facet_wrap( ~ key, nrow = 1) +
+    facet_wrap(~ key,
+               labeller=label_parsed
+    ) +
     geom_hline(yintercept = 1,
                linetype   = 2,
                color      = "darkgray") +
@@ -460,8 +487,8 @@ plt2_zero <- dat %>% tibble %>%
     coord_cartesian(ylim = c(0.50, 1.20)) +
     scale_fill_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
     scale_color_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
-    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\beta}}}$'),
-         y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$'),
+    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\delta}}}$'),
+         y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{MSS}}$'),
          fill = TeX('$\\mathbf{\\sigma^2_{x}}$')) +
     theme_bw() + 
     theme(text = element_text(face = "bold"))
@@ -485,8 +512,11 @@ plt2_cvCF <- dat %>% tibble %>%
     dplyr::filter(cl == 6) %>%
     dplyr::filter(n == 300) %>%
     dplyr::filter(tn == "cvCF") %>%
+    mutate(key=factor(key, labels= supp.labs )) %>%
     ggplot(aes( y = value, x = b, fill = x, color = x )) +
-    facet_wrap( ~ key, nrow = 1) +
+    facet_wrap(~ key,
+               labeller=label_parsed
+    ) +
     geom_hline(yintercept = 1,
                linetype   = 2,
                color      = "darkgray") +
@@ -499,8 +529,8 @@ plt2_cvCF <- dat %>% tibble %>%
     coord_cartesian(ylim = c(0.50, 1.20)) +
     scale_fill_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
     scale_color_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
-    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\beta}}}$'),
-         y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$'),
+    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\delta}}}$'),
+         y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{MSS}}$'),
          fill = TeX('$\\mathbf{\\sigma^2_{x}}$')) +
     theme_bw() + 
     theme(text = element_text(face = "bold"))
@@ -512,8 +542,11 @@ plt2_zero <- dat %>% tibble %>%
     dplyr::filter(cl == 6) %>%
     dplyr::filter(n == 300) %>%
     dplyr::filter(tn == "zero") %>%
+    mutate(key=factor(key, labels= supp.labs )) %>%
     ggplot(aes( y = value, x = b, fill = x, color = x )) +
-    facet_wrap( ~ key, nrow = 1) +
+    facet_wrap(~ key,
+               labeller=label_parsed
+    ) +
     geom_hline(yintercept = 1,
                linetype   = 2,
                color      = "darkgray") +
@@ -526,8 +559,8 @@ plt2_zero <- dat %>% tibble %>%
     coord_cartesian(ylim = c(0.50, 1.20)) +
     scale_fill_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
     scale_color_manual(values = RColorBrewer::brewer.pal(3, "Reds")) +
-    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\beta}}}$'),
-         y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{Method}}$'),
+    labs(x    = TeX('$\\mathbf{\\sigma^2_{\\delta}}}$'),
+         y    = TeX('$\\mathbf{RMSE_{OEC}/RMSE_{MSS}}$'),
          fill = TeX('$\\mathbf{\\sigma^2_{x}}$')) +
     theme_bw() + 
     theme(text = element_text(face = "bold"))
