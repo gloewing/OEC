@@ -1,21 +1,12 @@
 library(doParallel)
-library(CCA)
-library(MatrixCorrelation)
 library(caret)
 library(glmnet)
 library(foreach)
-library(CVXR)
 
 source("Study Strap Functions.R")
 source("SimFn_multiCountry.R")
-source("ss.ar.caret.mSSL.R")
-source("studyStrap.predict.caret.mSSL.R")
-source("fatTrim.R")
-source("SSE.caret.mSSL.R")
-source("merge.caret.mSSL.R")
-source("ss.caret.mSSL.R")
 source("OEC Functions.R")
-source("HIVDB Functions.R")
+
 # 
 # # 
 # sims6 <- cbind(325:378, expand.grid(c(0.25, 1, 4),
@@ -154,7 +145,6 @@ getDoParWorkers()
 timeStart <- Sys.time()
 
 results <- foreach(iterNum = 1:totalSims, .combine = list, .multicombine = TRUE) %dopar%{
-    #for(iterNum in 1:totalSims){
     
     print(paste0("start: ", iterNum, "_lambda: ", lamb))
     
@@ -185,7 +175,6 @@ results <- foreach(iterNum = 1:totalSims, .combine = list, .multicombine = TRUE)
     
         
         # save results
-        #setwd(save.folder)
         studyNum <- test_study
         cnt <- seedSet <- iterNum + 400 # ensures no repeats
         set.seed(seedSet)
@@ -484,8 +473,6 @@ results <- foreach(iterNum = 1:totalSims, .combine = list, .multicombine = TRUE)
 
                 
             }
-            
-            
             
             
         }
