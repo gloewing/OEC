@@ -3482,7 +3482,7 @@ ridgeAltSpecPCA <- function(data,
 
     while(eps > tol){
 
-=        itr <- itr + 1
+        itr <- itr + 1
 
         betaTemp <- beta # beta used as temp
 
@@ -5765,98 +5765,9 @@ ridgeAltX <- function(data,
 
         }
 
-        # w update
-        # if(!Avg){
-        #     # if not using average weights
-        #
-        #     if(wUpdate == "glmnet"){
-        #         # if use glmnet to update parameters
-        #         mod <- glmnet(y = y,
-        #                       x = as.matrix(X %*% beta),
-        #                       alpha = 0,
-        #                       lambda = mu,
-        #                       lower.limits = lowLim,
-        #                       standardize = standardize,
-        #                       intercept = TRUE,
-        #                       weights = diag(weights) )
-        #
-        #         # coefficients
-        #         w <-  as.vector(mod$beta)
-        #         w0 <- as.vector(mod$a0)
-        #
-        #     }else{
-        #
-        #         # w0 update
-        #         w0 <- eta * ( y_sum - sum( X %*% beta %*% w ) ) / Xnrow
-        #
-        #         # w update
-        #         bInv <- solve(    eta * ( u1 * t(beta) %*% XX %*% beta + u2 * muMat )    )
-        #         w <- bInv %*% (
-        #             eta * u1 * ( t(beta) %*% Xy - w0 * rowSums( t(beta) %*% t(X) %*% weights ) )
-        #
-        #         )
-        #
-        #
-        #
-        #     }
-        #
-        # }else{
-        #     # if average just update the intercept with closed form expression
-        #     # w0 update
-        #     w0 <- eta * ( y_sum - sum( X %*% beta %*% w ) ) / Xnrow
-        #
-        # }
-        #
-        # if(nnlsInd){
-        #     # if there is a nonnegativity constraint on the stacking weights
-        #     # do not apply to intercept
-        #
-        #     if(projs > 0){
-        #
-        #         # if project onto unit simplex
-        #
-        #         for(pr in 1:projs){
-        #             # project onto unit simplex
-        #
-        #             # Projection onto Non Negative Orthant
-        #             w <- sapply(w, function(x) max(0, x) )
-        #             # Projection onto Sum of 1
-        #             w <- w - ((sum(w) - 1) / K)
-        #
-        #             # Projection onto Non Negative Orthant
-        #             w <- sapply(w, function(x) max(0, x) )
-        #         }
-        #
-        #     }else{
-        #         # just standard projection onto non negative orthant -- not onto unit simplex
-        #
-        #         # Projection onto Non Negative Orthant
-        #         w <- sapply(w, function(x) max(0, x) )
-        #     }
-        #
-        #
-        # }
-        #
-        #
-        #
-
         eps <- obj0 - objImp[cur]
 
         obj0 <- objImp[cur]
-        # if(obj_r < min(objVec)){
-        #     # if the objective improves save it as current best
-        #     beta_Star <- beta
-        #     w_Star <- c(w0, w)
-        # }else{
-        #     # if it is not better, then do not update the best
-        #
-        #     if(objCriteria == TRUE){
-        #         # if obj criteria is true, use the best iteration as this iterations value
-        #         w <- w_Star[-1]
-        #         w0 <- w_Star[1]
-        #         beta <- beta_Star
-        #     }
-        # }
 
     }
 
@@ -6913,7 +6824,7 @@ objOEC_S <- function(data,
     }else if(sampSzWeight == 6){
         # just variance adjustment on LHS
         # LHS weights
-        u1 <- 1 / length(StackIndx)   LHS Objective weight   - N x 1 vector
+        u1 <- 1 / length(StackIndx) #  LHS Objective weight   - N x 1 vector
         u2 <- 1 # LHS Objective weight
 
         # RHS weights
@@ -9543,7 +9454,7 @@ oecEta_CV <- function(data,
                                           initialWindow = round(0.5 * length(indx1)), # minimum training set is half of total observations
                                           horizon = horizon2, # number of test-points in each fold #round(0.5 * length(indx1) / nfolds ), #nfolds, #round(0.5 * length(indx1) / nfolds ), # makes k = nfolds functionally
                                           fixedWindow = FALSE # if FALSE, the training set always start at the first sample and the training set size will vary over data splits.
-            ) make folds with balanced studies
+            ) # make folds with balanced studies
 
             # remove some so we dont do a HO-observation out CV
             len <- length(foldsList$train)
